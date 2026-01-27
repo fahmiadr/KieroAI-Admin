@@ -1,0 +1,140 @@
+{% extends "layout.html" %}
+{% block page_title %}Terminal Output{% endblock %}
+{% block breadcrumb %}{{ service.name }}{% endblock %}
+
+{% block content %}
+<!-- Header with AI Doctor Button -->
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <div style="display: flex; align-items: center; gap: 12px;">
+        <a href="{{ url_for('dashboard') }}" class="btn-icon">
+            <i class="bi bi-arrow-left"></i>
+        </a>
+        <div>
+            <div style="font-size: 0.8rem; color: var(--text-tertiary);">{{ service.log_file }}</div>
+        </div>
+    </div>
+    <div style="display: flex; gap: 12px;">
+        <button id="btnAnalyze" class="btn-pill" onclick="analyzeLog()"
+            style="background: linear-gradient(135deg, rgba(255, 159, 10, 0.3), rgba(255, 214, 10, 0.2)); color: #FFD60A; border: 1px solid rgba(255, 214, 10, 0.3);">
+            <i class="bi bi-stars"></i> AI Doctor
+        </button>
+        <button class="btn-pill" onclick="location.reload()">
+            <i class="bi bi-arrow-clockwise"></i> Refresh
+        </button>
+    </div>
+</div>
+
+<!-- AI Result Panel (Hidden by Default) -->
+<div id="aiResultCard" style="display: none; margin-bottom: 24px;">
+    <div class="stat-card" style="border: 1px solid rgba(255, 214, 10, 0.3); background: rgba(30, 30, 30, 0.8);">
+        <div
+            style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.1);">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <div
+                    style="width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, #FFD60A, #FF9F0A); display: grid; place-items: center;">
+                    <i class="bi bi-robot" style="color: black; font-size: 1.2rem;"></i>
+                </div>
+                <div>
+                    <div style="font-weight: 700; font-size: 1rem;">AI Doctor</div>
+                    <div style="font-size: 0.75rem; color: var(--text-tertiary);">Powered by Google Gemini</div>
+                </div>
+            </div>
+            <button onclick="document.getElementById('aiResultCard').style.display='none'" class="btn-icon">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+
+        <!-- Loading State -->
+        <div id="aiLoading" style="text-align: center; padding: 32px;">
+            <div
+                style="width: 40px; height: 40px; border: 3px solid rgba(255, 214, 10, 0.2); border-top-color: #FFD60A; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto;">
+            </div>
+            <p style="color: var(--text-tertiary); margin-top: 12px;">Menganalisis log dan mencari solusi...</p>
+        </div>
+
+        <!-- Result Content -->
+        <div id="aiContent" style="display: none;"></div>
+    </div>
+</div>
+
+<!-- Log Viewer (Terminal Style) -->
+<div class="log-container">
+    <div class="log-header">
+        <div class="window-actions">
+            <div class="window-dot red"></div>
+            <div class="window-dot yellow"></div>
+            <div class="window-dot green"></div>
+        </div>
+        <div
+            style="font-family: -apple-system; font-size: 0.8rem; font-weight: 600; color: rgba(255,255,255,0.5); display: flex; align-items: center; gap: 8px;">
+            <i class="bi bi-terminal-fill"></i>
+            {{ service.name }}
+        </div>
+        <div style="margin-left: auto; font-size: 0.75rem; color: var(--text-tertiary);">
+            Last 50 lines
+        </div>
+    </div>
+
+    <div class="log-box" id="logBox">
+        <pre style="margin: 0; white-space: pre-wrap;">{{ content }}</pre>
+    </div>
+</div>
+
+<style>
+    @keyframes spin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+</style>
+
+<script>
+    // Auto-scroll to bottom
+    const logBox = document.getElementById('logBox');
+    logBox.scrollTop = logBox.scrollHeight;
+
+    function analyzeLog() {
+        const serviceId = "{{ service.id }}";
+        const ui = {
+            card: document.getElementById('aiResultCard'),
+            loading: document.getElementById('aiLoading'),
+            content: document.getElementById('aiContent'),
+            btn: document.getElementById('btnAnalyze')
+        };
+
+        // UI State: Loading
+        ui.card.style.display = 'block';
+        ui.loading.style.display = 'block';
+        ui.content.style.display = 'none';
+        ui.btn.disabled = true;
+        ui.btn.innerHTML = '<i class="bi bi-hourglass-split"></i> Menganalisa...';
+
+        // Call Backend API
+        fetch(`/analyze_log/${serviceId}`, { method: 'POST' })
+            .then(res => res.json())
+            .then(data => {
+                // UI State: Done
+                ui.loading.style.display = 'none';
+                ui.content.style.display = 'block';
+                ui.btn.disabled = false;
+                ui.btn.innerHTML = '<i class="bi bi-stars"></i> AI Doctor';
+
+                if (data.error) {
+                    ui.content.innerHTML = `<div style="background: rgba(255, 69, 58, 0.15); border: 1px solid rgba(255, 69, 58, 0.3); border-radius: 10px; padding: 14px;"><i class="bi bi-exclamation-circle-fill" style="color: #FF453A;"></i> <span style="color: #e0e0e0;">${data.error}</span></div>`;
+                } else {
+                    ui.content.innerHTML = data.result;
+                }
+
+                // Scroll to AI result
+                ui.card.scrollIntoView({ behavior: 'smooth' });
+            })
+            .catch(err => {
+                ui.loading.style.display = 'none';
+                ui.content.style.display = 'block';
+                ui.content.innerHTML = `<div style="background: rgba(255, 69, 58, 0.15); border-radius: 10px; padding: 14px;"><i class="bi bi-wifi-off"></i> Koneksi Gagal: ${err}</div>`;
+                ui.btn.disabled = false;
+                ui.btn.innerHTML = '<i class="bi bi-stars"></i> AI Doctor';
+            });
+    }
+</script>
+{% endblock %}

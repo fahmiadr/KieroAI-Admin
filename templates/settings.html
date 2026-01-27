@@ -1,0 +1,110 @@
+{% extends "layout.html" %}
+{% block page_title %}System Settings{% endblock %}
+{% block breadcrumb %}Configuration{% endblock %}
+
+{% block content %}
+<div class="row" style="max-width: 800px; margin: 0 auto;">
+    <!-- Appearance Section -->
+    <div class="col-12 mb-4">
+        <h5
+            style="color: var(--text-tertiary); text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.05em; margin-bottom: 12px; margin-left: 8px;">
+            Environment</h5>
+        <div class="stat-card">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+                <div>
+                    <div style="font-weight: 600; font-size: 1rem; margin-bottom: 4px;">Active Environment</div>
+                    <div style="color: var(--text-secondary); font-size: 0.85rem;">Select which configuration set to
+                        use.</div>
+                </div>
+                <div class="env-switcher-card" style="width: 200px; margin: 0;">
+                    <a href="{{ url_for('switch_env', env_type='development') }}"
+                        class="env-option {{ 'active dev-active' if env == 'development' else '' }}">Dev</a>
+                    <a href="{{ url_for('switch_env', env_type='production') }}"
+                        class="env-option {{ 'active prod-active' if env == 'production' else '' }}">Prod</a>
+                </div>
+            </div>
+            <div
+                style="padding: 12px; background: rgba(0,0,0,0.2); border-radius: 10px; font-family: 'JetBrains Mono'; font-size: 0.8rem; color: var(--text-tertiary);">
+                Current config path: <span style="color: var(--accent);">configs/registry_{{ env }}.json</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Account Section -->
+    <div class="col-12 mb-4">
+        <h5
+            style="color: var(--text-tertiary); text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.05em; margin-bottom: 12px; margin-left: 8px;">
+            Administrator</h5>
+        <div class="stat-card">
+            <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 24px;">
+                <div
+                    style="width: 64px; height: 64px; border-radius: 50%; background: linear-gradient(135deg, #FF2D55, #FF375F); display: grid; place-items: center; font-size: 1.5rem; color: white; box-shadow: 0 4px 12px rgba(255, 45, 85, 0.3);">
+                    <i class="bi bi-person-fill"></i>
+                </div>
+                <div>
+                    <div style="font-weight: 700; font-size: 1.1rem; margin-bottom: 4px;">{{ app_config.admin_username
+                        }}</div>
+                    <div style="color: var(--text-secondary); font-size: 0.9rem;">Super Administrator</div>
+                </div>
+            </div>
+
+            <form>
+                <div style="margin-bottom: 16px;">
+                    <label
+                        style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">Display
+                        Name</label>
+                    <input type="text" value="System Admin"
+                        style="width: 100%; padding: 10px 12px; background: rgba(0,0,0,0.2); border: var(--border-glass); border-radius: 8px; color: white;"
+                        disabled>
+                </div>
+                <div style="margin-bottom: 16px;">
+                    <label
+                        style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">Role</label>
+                    <input type="text" value="Root Access"
+                        style="width: 100%; padding: 10px 12px; background: rgba(0,0,0,0.2); border: var(--border-glass); border-radius: 8px; color: white;"
+                        disabled>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Global Configuration Section (JSON Editor) -->
+    <div class="col-12 mb-4">
+        <h5
+            style="color: var(--text-tertiary); text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.05em; margin-bottom: 12px; margin-left: 8px;">
+            Global Configuration (config_app.json)</h5>
+        <div class="editor-container" style="height: 400px;">
+            <div class="log-header" style="background: #252526; border-bottom: 1px solid #1e1e1e;">
+                <div class="window-actions">
+                    <div class="window-dot red"></div>
+                    <div class="window-dot yellow"></div>
+                    <div class="window-dot green"></div>
+                </div>
+                <div
+                    style="font-family: -apple-system; font-size: 0.8rem; color: #ccc; margin-left: 12px; display: flex; align-items: center; gap: 6px;">
+                    <i class="bi bi-gear-fill"></i> config_app.json
+                </div>
+                <div style="margin-left: auto;">
+                    <button type="submit" form="globalConfigForm" class="btn-pill"
+                        style="background: rgba(48, 209, 88, 0.2); color: #30D158;">
+                        <i class="bi bi-save"></i> Save
+                    </button>
+                </div>
+            </div>
+
+            <form id="globalConfigForm" method="POST" action="{{ url_for('settings') }}"
+                style="flex: 1; display: flex; flex-direction: column;">
+                <textarea name="config_json" class="config-textarea">{{ app_config_json }}</textarea>
+            </form>
+        </div>
+    </div>
+
+    <!-- Application Info -->
+    <div class="col-12">
+        <div class="stat-card" style="text-align: center; padding: 24px;">
+            <div style="font-size: 0.9rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 4px;">Kawalo
+                Ops Center</div>
+        </div>
+    </div>
+</div>
+{% endblock %}

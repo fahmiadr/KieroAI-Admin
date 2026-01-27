@@ -1,0 +1,836 @@
+/* ============================
+   KIERO Ops - MacOS Glassmorphism (V5)
+   "Frosted Glass" Premium Aesthetic
+   ============================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+    /* MacOS Dark Palette */
+    --accent: #0A84FF;
+    /* iOS Blue */
+    --bg-app: #000000;
+    --bg-sidebar: rgba(28, 28, 30, 0.6);
+    --bg-glass: rgba(30, 30, 30, 0.45);
+    --bg-glass-strong: rgba(44, 44, 46, 0.65);
+
+    /* Borders */
+    --border-glass: 1px solid rgba(255, 255, 255, 0.12);
+    --border-subtle: 1px solid rgba(255, 255, 255, 0.06);
+
+    /* Text */
+    --text-primary: rgba(255, 255, 255, 0.95);
+    --text-secondary: rgba(255, 255, 255, 0.65);
+    --text-tertiary: rgba(255, 255, 255, 0.45);
+
+    /* System Metrics */
+    --radius-window: 16px;
+    --radius-item: 10px;
+    --blur-strength: 30px;
+    --sidebar-w: 260px;
+}
+
+* {
+    box-sizing: border-box;
+    outline: none;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', sans-serif;
+    /* System Fonts Priority */
+    background-color: var(--bg-app);
+    /* Abstract colorful gradients for glass effect to show */
+    background-image:
+        radial-gradient(at 10% 10%, rgba(10, 132, 255, 0.15) 0px, transparent 40%),
+        radial-gradient(at 90% 90%, rgba(191, 90, 242, 0.1) 0px, transparent 40%);
+    color: var(--text-primary);
+    margin: 0;
+    height: 100vh;
+    overflow: hidden;
+    letter-spacing: -0.01em;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* --- Layout --- */
+.app-container {
+    display: grid;
+    grid-template-columns: var(--sidebar-w) 1fr;
+    height: 100vh;
+}
+
+/* --- Sidebar (Mac-style) --- */
+.sidebar {
+    background: var(--bg-sidebar);
+    backdrop-filter: blur(var(--blur-strength));
+    -webkit-backdrop-filter: blur(var(--blur-strength));
+    border-right: var(--border-glass);
+    padding: 32px 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 32px;
+    padding: 0 8px;
+}
+
+.brand-icon {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, #0A84FF, #5E5CE6);
+    border-radius: 10px;
+    display: grid;
+    place-items: center;
+    color: white;
+    box-shadow: 0 4px 12px rgba(10, 132, 255, 0.3);
+}
+
+.brand-name {
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+
+.brand-subtitle {
+    font-size: 0.8rem;
+    color: var(--text-tertiary);
+    font-weight: 500;
+}
+
+.nav-section-title {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--text-tertiary);
+    margin: 24px 12px 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    margin-bottom: 2px;
+    border-radius: var(--radius-item);
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: background 0.2s;
+}
+
+.nav-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: white;
+}
+
+.nav-item.active {
+    background: rgba(10, 132, 255, 0.2);
+    color: #60a5fa;
+}
+
+.nav-item i {
+    font-size: 1.1rem;
+    width: 20px;
+    text-align: center;
+}
+
+/* Env Switcher (Segmented Control) */
+.env-switcher-card {
+    background: rgba(118, 118, 128, 0.24);
+    border-radius: 8px;
+    padding: 2px;
+    display: flex;
+    margin-bottom: 24px;
+}
+
+.env-option {
+    flex: 1;
+    text-align: center;
+    padding: 6px 0;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border-radius: 6px;
+    color: var(--text-secondary);
+    transition: all 0.2s;
+}
+
+.env-option:hover {
+    color: white;
+}
+
+.env-option.active {
+    background: rgba(99, 99, 102, 0.7);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+    color: white;
+}
+
+.env-option.active.prod-active {
+    background: #34C759;
+}
+
+/* iOS Green */
+.env-option.active.dev-active {
+    background: #FF9F0A;
+}
+
+/* iOS Orange */
+
+/* --- Main Content --- */
+.main-content {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.topbar {
+    height: 64px;
+    padding: 0 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    /* Transparent header like Mac app toolbar */
+    background: rgba(28, 28, 30, 0.3);
+    backdrop-filter: blur(20px);
+    border-bottom: var(--border-subtle);
+}
+
+.page-title {
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.content-area {
+    flex: 1;
+    overflow-y: auto;
+    padding: 32px;
+}
+
+/* --- Stats Grid (Mac Widgets) --- */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin-bottom: 32px;
+}
+
+.stat-card {
+    background: var(--bg-glass);
+    backdrop-filter: blur(20px);
+    border-radius: 18px;
+    padding: 18px;
+    border: var(--border-glass);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    transition: transform 0.2s;
+}
+
+.stat-card:hover {
+    transform: scale(1.02);
+    background: var(--bg-glass-strong);
+}
+
+.stat-value {
+    font-size: 1.8rem;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    margin: 8px 0;
+}
+
+.stat-label {
+    font-size: 0.8rem;
+    color: var(--text-tertiary);
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.stat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+}
+
+.stat-trend {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.stat-progress {
+    height: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    margin-top: 12px;
+    overflow: hidden;
+}
+
+.stat-progress-bar {
+    height: 100%;
+    border-radius: 4px;
+}
+
+.stat-progress-bar.cpu {
+    background: #0A84FF;
+}
+
+.stat-progress-bar.memory {
+    background: #FF9F0A;
+}
+
+.stat-progress-bar.disk {
+    background: #FF453A;
+}
+
+/* --- Services Row (Mac List View) --- */
+.services-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.service-card.row-layout {
+    background: var(--bg-glass);
+    backdrop-filter: blur(15px);
+    border: var(--border-glass);
+    border-radius: 12px;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: background 0.2s;
+}
+
+.service-card.row-layout:hover {
+    background: rgba(50, 50, 50, 0.5);
+}
+
+/* Info Col */
+.service-info-col {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex: 2;
+}
+
+.service-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    display: grid;
+    place-items: center;
+    font-size: 1.2rem;
+    color: white;
+}
+
+.service-name {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0;
+    color: var(--text-primary);
+}
+
+.service-id {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    font-family: 'JetBrains Mono';
+}
+
+/* Actions Col (Mac Toolbar Style) */
+.service-actions-col {
+    flex: 2;
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+}
+
+.action-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.divider-vertical {
+    width: 1px;
+    height: 24px;
+    background: var(--border-light);
+    margin: 0 8px;
+}
+
+.btn-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: grid;
+    place-items: center;
+    font-size: 0.9rem;
+    background: rgba(118, 118, 128, 0.2);
+    color: white;
+    transition: background 0.2s;
+}
+
+.btn-icon:hover {
+    background: rgba(118, 118, 128, 0.4);
+}
+
+.btn-icon.success {
+    color: #30D158;
+    background: rgba(48, 209, 88, 0.15);
+}
+
+.btn-icon.success:hover {
+    background: rgba(48, 209, 88, 0.3);
+}
+
+.btn-icon.danger {
+    color: #FF453A;
+    background: rgba(255, 69, 58, 0.15);
+}
+
+.btn-icon.danger:hover {
+    background: rgba(255, 69, 58, 0.3);
+}
+
+.btn-icon.disabled {
+    opacity: 0.3;
+    cursor: default;
+}
+
+/* Buttons Pill */
+.btn-pill {
+    padding: 6px 14px;
+    border-radius: 14px;
+    background: rgba(118, 118, 128, 0.2);
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.2s;
+}
+
+.btn-pill:hover {
+    background: rgba(118, 118, 128, 0.4);
+}
+
+/* Status Col */
+.service-status-col {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.status-text {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.status-indicator.running .status-dot {
+    background: #30D158;
+    box-shadow: 0 0 8px rgba(48, 209, 88, 0.6);
+}
+
+.status-indicator.running .status-text {
+    color: #30D158;
+}
+
+.status-indicator.stopped .status-dot {
+    background: #FF453A;
+}
+
+.status-indicator.stopped .status-text {
+    color: #FF453A;
+}
+
+/* --- Log Box Container (Terminal Style) --- */
+.log-container {
+    background: #1e1e1e;
+    /* VS Code dark bg */
+    border-radius: 12px;
+    border: var(--border-glass);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 80vh;
+    /* Fixed height for scroll */
+}
+
+/* Log Header (Mac Window Title) */
+.log-header {
+    background: #2d2d2d;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #333;
+    gap: 12px;
+}
+
+.window-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.window-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    opacity: 0.8;
+}
+
+.window-dot.red {
+    background: #ff5f56;
+}
+
+.window-dot.yellow {
+    background: #ffbd2e;
+}
+
+.window-dot.green {
+    background: #27c93f;
+}
+
+.log-box {
+    background: transparent;
+    color: #d4d4d4;
+    font-family: 'JetBrains Mono', 'Menlo', monospace;
+    font-size: 13px;
+    padding: 16px;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    border: none;
+    line-height: 1.5;
+}
+
+/* --- Config Editor (Code Editor Style) --- */
+.editor-container {
+    background: #1e1e1e;
+    border-radius: 12px;
+    border: var(--border-glass);
+    overflow: hidden;
+    height: 80vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.config-textarea {
+    flex: 1;
+    background: #1e1e1e;
+    color: #9cdcfe;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    padding: 20px;
+    border: none;
+    resize: none;
+    line-height: 1.6;
+}
+
+/* --- Users Table (Mac Finder List) --- */
+.users-container {
+    background: var(--bg-glass);
+    backdrop-filter: blur(20px);
+    border-radius: 12px;
+    border: var(--border-glass);
+    overflow: hidden;
+}
+
+.users-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.users-table th {
+    text-align: left;
+    padding: 12px 20px;
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
+    font-weight: 500;
+    border-bottom: var(--border-glass);
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.users-table td {
+    padding: 14px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    color: var(--text-primary);
+    font-size: 0.9rem;
+}
+
+.users-table tr:hover {
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.users-table tr:last-child td {
+    border-bottom: none;
+}
+
+/* Status Badges */
+.status-badge {
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-secondary);
+    display: inline-block;
+}
+
+.status-badge.online {
+    background: rgba(48, 209, 88, 0.2);
+    color: #30D158;
+}
+
+.status-badge.away {
+    background: rgba(255, 159, 10, 0.2);
+    color: #FF9F0A;
+}
+
+.status-badge.offline {
+    background: rgba(255, 69, 58, 0.2);
+    color: #FF453A;
+}
+
+/* Animations */
+.animate-fade-in {
+    animation: fadeIn 0.4s ease-out forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        opacity: 0.4;
+    }
+
+    100% {
+        transform: scale(2.5);
+        opacity: 0;
+    }
+}
+
+/* Alert */
+.alert-custom {
+    background: rgba(10, 132, 255, 0.15);
+    border: 1px solid rgba(10, 132, 255, 0.3);
+    border-radius: 12px;
+    color: white;
+    padding: 14px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+/* ========================================
+   DARK MODE FORM ELEMENTS
+   ======================================== */
+
+/* Dark Mode Select/Dropdown */
+select,
+select option {
+    background-color: #1e1e1e !important;
+    color: #e0e0e0 !important;
+}
+
+select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23888' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 36px !important;
+    cursor: pointer;
+}
+
+select:focus {
+    border-color: var(--accent) !important;
+    box-shadow: 0 0 0 2px rgba(10, 132, 255, 0.2);
+}
+
+/* Dark Mode Inputs & Textareas */
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="number"],
+textarea {
+    background-color: rgba(30, 30, 30, 0.8) !important;
+    color: #e0e0e0 !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+}
+
+input::placeholder,
+textarea::placeholder {
+    color: rgba(255, 255, 255, 0.3) !important;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+    outline: none;
+    border-color: var(--accent) !important;
+}
+
+/* ========================================
+   CUSTOM SCROLLBAR (Mac-style)
+   ======================================== */
+
+/* Webkit Scrollbar */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.25);
+    border: 2px solid transparent;
+    background-clip: padding-box;
+}
+
+::-webkit-scrollbar-corner {
+    background: transparent;
+}
+
+/* Firefox Scrollbar */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.15) rgba(0, 0, 0, 0.1);
+}
+
+/* ========================================
+   DASHBOARD ENHANCEMENTS
+   ======================================== */
+
+/* Section Title with Line */
+.section-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.1), transparent);
+}
+
+.section-title i {
+    color: var(--accent);
+}
+
+/* Enhanced Stat Cards */
+.stat-card.highlight {
+    background: linear-gradient(135deg, rgba(10, 132, 255, 0.15), rgba(94, 92, 230, 0.1));
+    border: 1px solid rgba(10, 132, 255, 0.3);
+}
+
+.stat-card .stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    font-size: 1.5rem;
+    margin-bottom: 12px;
+}
+
+.stat-card .stat-icon.cpu {
+    background: rgba(10, 132, 255, 0.2);
+    color: #0A84FF;
+}
+
+.stat-card .stat-icon.memory {
+    background: rgba(255, 159, 10, 0.2);
+    color: #FF9F0A;
+}
+
+.stat-card .stat-icon.disk {
+    background: rgba(255, 69, 58, 0.2);
+    color: #FF453A;
+}
+
+/* Service Card Hover Glow */
+.service-card.row-layout:hover {
+    background: rgba(50, 50, 50, 0.5);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Modal Overlay */
+#serviceModal {
+    backdrop-filter: blur(8px);
+}
+
+/* Fancy Button Hover */
+.btn-pill:active {
+    transform: scale(0.97);
+}
+
+button[type="submit"] {
+    cursor: pointer;
+    border: none;
+}
+
+/* Card Lists */
+.services-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}

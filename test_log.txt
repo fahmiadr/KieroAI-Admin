@@ -1,0 +1,10 @@
+[2026-01-22 21:00:00] INFO: Application started successfully
+[2026-01-22 21:00:01] INFO: Database connection established
+[2026-01-22 21:00:02] INFO: API server listening on port 3000
+[2026-01-22 21:05:00] DEBUG: Request received: GET /api/health
+[2026-01-22 21:05:01] DEBUG: Health check passed
+[2026-01-22 21:10:00] INFO: User 'admin' logged in
+[2026-01-22 21:10:05] DEBUG: Session created for user admin
+[2026-01-22 21:15:00] WARN: High memory usage detected (85%)
+[2026-01-22 21:15:01] INFO: Triggering garbage collection
+[2026-01-22 21:15:02] INFO: Memory usage normalized (65%)

@@ -1,0 +1,163 @@
+{% extends "layout.html" %}
+{% block page_title %}Service Dashboard{% endblock %}
+{% block breadcrumb %}Dashboard{% endblock %}
+
+{% block content %}
+<!-- System Stats -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-header">
+            <div class="stat-icon cpu">
+                <i class="bi bi-cpu"></i>
+            </div>
+            <div class="stat-trend {{ 'up' if stats.cpu_percent > 70 else 'down' }}">
+                <i class="bi {{ 'bi-arrow-up' if stats.cpu_percent > 70 else 'bi-arrow-down' }}"></i>
+                {{ 'High' if stats.cpu_percent > 70 else 'Normal' }}
+            </div>
+        </div>
+        <div class="stat-body">
+            <div class="stat-value">{{ stats.cpu_percent }}%</div>
+            <div class="stat-label">CPU Usage</div>
+        </div>
+        <div class="stat-progress">
+            <div class="stat-progress-bar cpu" style="width: {{ stats.cpu_percent }}%"></div>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-header">
+            <div class="stat-icon memory">
+                <i class="bi bi-memory"></i>
+            </div>
+            <div class="stat-trend {{ 'up' if stats.memory.percent > 80 else 'down' }}">
+                <i class="bi {{ 'bi-arrow-up' if stats.memory.percent > 80 else 'bi-arrow-down' }}"></i>
+                {{ 'High' if stats.memory.percent > 80 else 'Normal' }}
+            </div>
+        </div>
+        <div class="stat-body">
+            <div class="stat-value">{{ stats.memory.percent }}%</div>
+            <div class="stat-label">Memory Usage</div>
+        </div>
+        <div class="stat-progress">
+            <div class="stat-progress-bar memory" style="width: {{ stats.memory.percent }}%"></div>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-header">
+            <div class="stat-icon disk">
+                <i class="bi bi-hdd"></i>
+            </div>
+            <div class="stat-trend {{ 'up' if stats.disk.percent > 90 else 'down' }}">
+                <i class="bi {{ 'bi-arrow-up' if stats.disk.percent > 90 else 'bi-arrow-down' }}"></i>
+                {{ 'Critical' if stats.disk.percent > 90 else 'Normal' }}
+            </div>
+        </div>
+        <div class="stat-body">
+            <div class="stat-value">{{ stats.disk.percent }}%</div>
+            <div class="stat-label">Disk Usage</div>
+        </div>
+        <div class="stat-progress">
+            <div class="stat-progress-bar disk" style="width: {{ stats.disk.percent }}%"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Services Section -->
+<div class="section-header">
+    <h2 class="section-title">
+        <i class="bi bi-layers"></i>
+        Registered Services
+    </h2>
+    <span class="text-muted" style="font-size: 0.85rem;">
+        {{ data.environment_name }}
+    </span>
+</div>
+
+{% if data.services %}
+<div class="accordion custom-accordion" id="dashboardAccordion">
+    {% for group, services in data.services|groupby('group') %}
+    <div class="accordion-item mb-3"
+        style="background: rgba(30, 30, 30, 0.4); border: 1px solid rgba(255, 255, 255, 0.1);">
+        <h2 class="accordion-header" id="heading{{ loop.index }}">
+            <button class="accordion-button {{ 'collapsed' if not loop.first }}" type="button" data-bs-toggle="collapse"
+                data-bs-target="#collapse{{ loop.index }}" aria-expanded="{{ 'true' if loop.first else 'false' }}"
+                aria-controls="collapse{{ loop.index }}" style="background: rgba(255, 255, 255, 0.05); color: #fff;">
+                <i class="bi bi-folder2-open me-2"></i> {{ group }}
+                <span class="badge bg-primary rounded-pill ms-2" style="font-size: 0.7rem;">{{ services|length }}</span>
+            </button>
+        </h2>
+        <div id="collapse{{ loop.index }}" class="accordion-collapse collapse {{ 'show' if loop.first }}"
+            aria-labelledby="heading{{ loop.index }}" data-bs-parent="#dashboardAccordion">
+            <div class="accordion-body p-3">
+                <div class="services-grid">
+                    {% for service in services %}
+                    <div class="service-card row-layout">
+                        <!-- Col 1: Service Info -->
+                        <div class="service-info-col">
+                            <div class="service-icon">
+                                <i class="bi {{ 'bi-server' if service.type == 'node' else 'bi-database' }}"></i>
+                            </div>
+                            <div>
+                                <h3 class="service-name">{{ service.name }}</h3>
+                                <span class="service-id">{{ service.id }}</span>
+                            </div>
+                        </div>
+
+                        <!-- Col 2: Actions (Center) -->
+                        <div class="service-actions-col">
+                            <div class="action-group">
+                                {% if service.status == 'Running' %}
+                                <a href="/action/{{ service.id }}/stop" class="btn-icon danger" title="Stop Service">
+                                    <i class="bi bi-stop-fill"></i>
+                                </a>
+                                <a href="/action/{{ service.id }}/start" class="btn-icon disabled" title="Running">
+                                    <i class="bi bi-play-fill"></i>
+                                </a>
+                                {% else %}
+                                <a href="/action/{{ service.id }}/stop" class="btn-icon disabled" title="Stopped">
+                                    <i class="bi bi-stop-fill"></i>
+                                </a>
+                                <a href="/action/{{ service.id }}/start" class="btn-icon success" title="Start Service">
+                                    <i class="bi bi-play-fill"></i>
+                                </a>
+                                {% endif %}
+                            </div>
+                            <div class="divider-vertical"></div>
+                            <div class="action-group">
+                                <a href="/logs/{{ service.id }}" class="btn-pill" title="View Logs">
+                                    <i class="bi bi-journal-text"></i> Logs
+                                </a>
+                                <a href="/config/{{ service.id }}" class="btn-pill" title="Configuration">
+                                    <i class="bi bi-gear"></i> Config
+                                </a>
+                                {% if service.url %}
+                                <a href="{{ service.url }}" target="_blank" class="btn-pill" title="Open Application">
+                                    <i class="bi bi-box-arrow-up-right"></i> Open
+                                </a>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Col 3: Status (Right) -->
+                        <div class="service-status-col">
+                            <div class="status-indicator {{ 'running' if service.status == 'Running' else 'stopped' }}">
+                                <span class="status-dot"></span>
+                                <span class="status-text">{{ service.status }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+    <i class="bi bi-inbox"></i>
+    <p>No services configured in {{ data.environment_name }}</p>
+</div>
+{% endif %}
+{% endblock %}

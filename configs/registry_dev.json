@@ -1,0 +1,29 @@
+{
+    "environment_name": "Development (Localhost)",
+    "services": [
+        {
+            "id": "dummy_api",
+            "name": "Simulasi Kawalo API",
+            "type": "dummy",
+            "category": "backend",
+            "group": "Development",
+            "url": "http://localhost:5000",
+            "command_start": "echo 'Service Started'",
+            "command_stop": "echo 'Service Stopped'",
+            "check_keyword": "python",
+            "log_file": "./test_log.txt",
+            "config_file": "./.env"
+        },
+        {
+            "id": "mendawai",
+            "name": "mendawai-servis",
+            "type": "node",
+            "group": "Kawalo Core",
+            "command_start": "npm start",
+            "command_stop": "taskkill",
+            "check_keyword": "",
+            "log_file": "logs/mendawai/log_file",
+            "config_file": "path/log/env."
+        }
+    ]
+}

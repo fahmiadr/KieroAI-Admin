@@ -1,0 +1,10 @@
+{
+    "admin_username": "admin",
+    "admin_password": "password_aman_ops",
+    "dashboard_title": "KIERO Ops Center",
+    "theme_mode": "dark",
+    "refresh_rate_seconds": 10,
+    "enable_notifications": true,
+    "max_log_lines": 100,
+    "maintenance_mode": false
+}

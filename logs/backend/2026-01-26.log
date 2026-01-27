@@ -1,0 +1,40 @@
+
+> kawalo-security-backend@1.0.0 start
+> node server.js
+
+[dotenv@17.2.3] injecting env (5) from .env -- tip: 🗂️ backup and recover secrets: https://dotenvx.com/ops
+[dotenv@17.2.3] injecting env (0) from .env -- tip: ⚙️  suppress all logs with { quiet: true }
+Notification Poller started...
+Server is running on port 5000
+MySQL Database connected successfully.
+
+> kawalo-security-backend@1.0.0 start
+> node server.js
+
+[dotenv@17.2.3] injecting env (5) from .env -- tip: 👥 sync secrets across teammates & machines: https://dotenvx.com/ops
+[dotenv@17.2.3] injecting env (0) from .env -- tip: ⚙️  load multiple .env files with { path: ['.env.local', '.env'] }
+Notification Poller started...
+Server is running on port 5000
+MySQL Database connected successfully.
+Error: Not allowed by CORS
+    at origin (C:\laragon\www\Kawalo-Web-Admin\backend\server.js:25:16)
+    at C:\laragon\www\Kawalo-Web-Admin\backend\node_modules\cors\lib\index.js:219:13
+    at optionsCallback (C:\laragon\www\Kawalo-Web-Admin\backend\node_modules\cors\lib\index.js:199:9)
+    at corsMiddleware (C:\laragon\www\Kawalo-Web-Admin\backend\node_modules\cors\lib\index.js:204:7)
+    at Layer.handleRequest (C:\laragon\www\Kawalo-Web-Admin\backend\node_modules\router\lib\layer.js:152:17)
+    at trimPrefix (C:\laragon\www\Kawalo-Web-Admin\backend\node_modules\router\index.js:342:13)
+    at C:\laragon\www\Kawalo-Web-Admin\backend\node_modules\router\index.js:297:9
+    at processParams (C:\laragon\www\Kawalo-Web-Admin\backend\node_modules\router\index.js:582:12)
+    at next (C:\laragon\www\Kawalo-Web-Admin\backend\node_modules\router\index.js:291:5)
+    at Function.handle (C:\laragon\www\Kawalo-Web-Admin\backend\node_modules\router\index.js:186:3)
+Error: Not allowed by CORS
+    at origin (C:\laragon\www\Kawalo-Web-Admin\backend\server.js:25:16)
+    at C:\laragon\www\Kawalo-Web-Admin\backend\node_modules\cors\lib\index.js:219:13
+    at optionsCallback (C:\laragon\www\Kawalo-Web-Admin\backend\node_modules\cors\lib\index.js:199:9)
+    at corsMiddleware (C:\laragon\www\Kawalo-Web-Admin\backend\node_modules\cors\lib\index.js:204:7)
+    at Layer.handleRequest (C:\laragon\www\Kawalo-Web-Admin\backend\node_modules\router\lib\layer.js:152:17)
+    at trimPrefix (C:\laragon\www\Kawalo-Web-Admin\backend\node_modules\router\index.js:342:13)
+    at C:\laragon\www\Kawalo-Web-Admin\backend\node_modules\router\index.js:297:9
+    at processParams (C:\laragon\www\Kawalo-Web-Admin\backend\node_modules\router\index.js:582:12)
+    at next (C:\laragon\www\Kawalo-Web-Admin\backend\node_modules\router\index.js:291:5)
+    at Function.handle (C:\laragon\www\Kawalo-Web-Admin\backend\node_modules\router\index.js:186:3)

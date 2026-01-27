@@ -1,0 +1,319 @@
+{% extends "layout.html" %}
+{% block page_title %}Service Manager{% endblock %}
+{% block breadcrumb %}Services{% endblock %}
+
+{% block content %}
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px;">
+    <!-- Development Services -->
+    <div>
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+            <h5
+                style="margin: 0; color: var(--text-tertiary); text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.05em; display: flex; align-items: center; gap: 8px;">
+                <span style="width: 10px; height: 10px; border-radius: 50%; background: #FF9F0A;"></span>
+                Development Services ({{ dev_services|length }})
+            </h5>
+            <button class="btn-pill" onclick="showAddForm('development')"
+                style="background: rgba(255, 159, 10, 0.2); color: #FF9F0A;">
+                <i class="bi bi-plus-lg"></i> Add Service
+            </button>
+        </div>
+
+        <div class="services-list">
+            {% if dev_services %}
+            <div class="accordion custom-accordion" id="devServicesAccordion">
+                {% for group, services in dev_services|groupby('group') %}
+                <div class="accordion-item mb-2"
+                    style="background: rgba(30, 30, 30, 0.4); border: 1px solid rgba(255, 255, 255, 0.1);">
+                    <h2 class="accordion-header" id="headingDev{{ loop.index }}">
+                        <button class="accordion-button {{ 'collapsed' if not loop.first }}" type="button"
+                            data-bs-toggle="collapse" data-bs-target="#collapseDev{{ loop.index }}"
+                            aria-expanded="{{ 'true' if loop.first else 'false' }}"
+                            aria-controls="collapseDev{{ loop.index }}"
+                            style="background: rgba(255, 255, 255, 0.05); color: #fff; padding: 10px 15px; font-size: 0.9rem;">
+                            <i class="bi bi-folder2-open me-2"></i> {{ group }}
+                            <span class="badge bg-secondary rounded-pill ms-2" style="font-size: 0.65rem;">{{
+                                services|length }}</span>
+                        </button>
+                    </h2>
+                    <div id="collapseDev{{ loop.index }}" class="accordion-collapse collapse {{ 'show' if loop.first }}"
+                        aria-labelledby="headingDev{{ loop.index }}" data-bs-parent="#devServicesAccordion">
+                        <div class="accordion-body p-2">
+                            {% for svc in services %}
+                            <div class="service-card row-layout" style="margin-bottom: 8px;">
+                                <div class="service-info-col">
+                                    <div class="service-icon"
+                                        style="background: rgba(255, 159, 10, 0.1); color: #FF9F0A;">
+                                        <i
+                                            class="bi bi-{{ 'database' if svc.type == 'laragon' else 'code-slash' if svc.type == 'node' else 'terminal' }}"></i>
+                                    </div>
+                                    <div>
+                                        <div class="service-name">{{ svc.name }}</div>
+                                        <div class="service-id">{{ svc.id }} • {{ svc.type }}</div>
+                                    </div>
+                                </div>
+                                <div style="display: flex; gap: 8px;">
+                                    <button class="btn-icon" onclick="editService('development', '{{ svc.id }}')"
+                                        title="Edit">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                    <a href="{{ url_for('delete_service', env='development', service_id=svc.id) }}"
+                                        class="btn-icon danger" title="Delete"
+                                        onclick="return confirm('Delete {{ svc.name }}?')">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div
+                style="padding: 32px; text-align: center; color: var(--text-tertiary); background: var(--bg-glass); border-radius: 12px; border: var(--border-glass);">
+                <i class="bi bi-inbox" style="font-size: 2rem; margin-bottom: 8px; display: block;"></i>
+                No services configured
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Production Services -->
+    <div>
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+            <h5
+                style="margin: 0; color: var(--text-tertiary); text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.05em; display: flex; align-items: center; gap: 8px;">
+                <span style="width: 10px; height: 10px; border-radius: 50%; background: #30D158;"></span>
+                Production Services ({{ prod_services|length }})
+            </h5>
+            <button class="btn-pill" onclick="showAddForm('production')"
+                style="background: rgba(48, 209, 88, 0.2); color: #30D158;">
+                <i class="bi bi-plus-lg"></i> Add Service
+            </button>
+        </div>
+
+        <div class="services-list">
+            {% if prod_services %}
+            <div class="accordion custom-accordion" id="prodServicesAccordion">
+                {% for group, services in prod_services|groupby('group') %}
+                <div class="accordion-item mb-2"
+                    style="background: rgba(30, 30, 30, 0.4); border: 1px solid rgba(255, 255, 255, 0.1);">
+                    <h2 class="accordion-header" id="headingProd{{ loop.index }}">
+                        <button class="accordion-button {{ 'collapsed' if not loop.first }}" type="button"
+                            data-bs-toggle="collapse" data-bs-target="#collapseProd{{ loop.index }}"
+                            aria-expanded="{{ 'true' if loop.first else 'false' }}"
+                            aria-controls="collapseProd{{ loop.index }}"
+                            style="background: rgba(255, 255, 255, 0.05); color: #fff; padding: 10px 15px; font-size: 0.9rem;">
+                            <i class="bi bi-folder2-open me-2"></i> {{ group }}
+                            <span class="badge bg-secondary rounded-pill ms-2" style="font-size: 0.65rem;">{{
+                                services|length }}</span>
+                        </button>
+                    </h2>
+                    <div id="collapseProd{{ loop.index }}"
+                        class="accordion-collapse collapse {{ 'show' if loop.first }}"
+                        aria-labelledby="headingProd{{ loop.index }}" data-bs-parent="#prodServicesAccordion">
+                        <div class="accordion-body p-2">
+                            {% for svc in services %}
+                            <div class="service-card row-layout" style="margin-bottom: 8px;">
+                                <div class="service-info-col">
+                                    <div class="service-icon"
+                                        style="background: rgba(48, 209, 88, 0.1); color: #30D158;">
+                                        <i
+                                            class="bi bi-{{ 'database' if svc.type == 'laragon' else 'code-slash' if svc.type == 'node' else 'terminal' }}"></i>
+                                    </div>
+                                    <div>
+                                        <div class="service-name">{{ svc.name }}</div>
+                                        <div class="service-id">{{ svc.id }} • {{ svc.type }}</div>
+                                    </div>
+                                </div>
+                                <div style="display: flex; gap: 8px;">
+                                    <button class="btn-icon" onclick="editService('production', '{{ svc.id }}')"
+                                        title="Edit">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                    <a href="{{ url_for('delete_service', env='production', service_id=svc.id) }}"
+                                        class="btn-icon danger" title="Delete"
+                                        onclick="return confirm('Delete {{ svc.name }}?')">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div
+                style="padding: 32px; text-align: center; color: var(--text-tertiary); background: var(--bg-glass); border-radius: 12px; border: var(--border-glass);">
+                <i class="bi bi-inbox" style="font-size: 2rem; margin-bottom: 8px; display: block;"></i>
+                No services configured
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Add/Edit Service Modal -->
+        <div id="serviceModal"
+            style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 1000; display: none; align-items: center; justify-content: center;">
+            <div
+                style="background: #1e1e1e; border-radius: 16px; border: var(--border-glass); width: 600px; max-height: 90vh; overflow-y: auto;">
+                <div
+                    style="padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center;">
+                    <h4 id="modalTitle" style="margin: 0;">Add New Service</h4>
+                    <button onclick="closeModal()"
+                        style="background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer;">&times;</button>
+                </div>
+                <form id="serviceForm" method="POST" action="{{ url_for('save_service') }}" style="padding: 24px;">
+                    <input type="hidden" name="env_target" id="envTarget">
+                    <input type="hidden" name="original_id" id="originalId">
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+                        <div>
+                            <label
+                                style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">Service
+                                ID *</label>
+                            <input type="text" name="id" id="svcId" required placeholder="e.g. kawalo_backend"
+                                style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: var(--border-glass); border-radius: 8px; color: white;">
+                        </div>
+                        <div>
+                            <label
+                                style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">Service
+                                Name *</label>
+                            <input type="text" name="name" id="svcName" required placeholder="e.g. Kawalo Backend API"
+                                style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: var(--border-glass); border-radius: 8px; color: white; margin-bottom: 8px;">
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 16px;">
+                        <label
+                            style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">Group</label>
+                        <input type="text" name="group" id="svcGroup" list="groupList" placeholder="e.g. Kawalo Core"
+                            style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: var(--border-glass); border-radius: 8px; color: white;">
+                        <datalist id="groupList">
+                            <option value="Kawalo Core">
+                            <option value="Infrastructure">
+                            <option value="Development">
+                            <option value="External">
+                        </datalist>
+                    </div>
+
+                    <div style="margin-bottom: 16px;">
+                        <label
+                            style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">Service
+                            URL</label>
+                        <input type="text" name="url" id="svcUrl" placeholder="e.g. http://localhost:3000"
+                            style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: var(--border-glass); border-radius: 8px; color: white;">
+                    </div>
+
+                    <div style="margin-bottom: 16px;">
+                        <label
+                            style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">Type</label>
+                        <select name="type" id="svcType"
+                            style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: var(--border-glass); border-radius: 8px; color: white;">
+                            <option value="node">Node.js</option>
+                            <option value="python">Python</option>
+                            <option value="laragon">Laragon/MySQL</option>
+                            <option value="docker">Docker</option>
+                            <option value="dummy">Dummy/Test</option>
+                        </select>
+                    </div>
+
+                    <div style="margin-bottom: 16px;">
+                        <label
+                            style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">Start
+                            Command *</label>
+                        <textarea name="command_start" id="svcStart" required rows="2" placeholder="e.g. npm start"
+                            style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: var(--border-glass); border-radius: 8px; color: white; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem;"></textarea>
+                    </div>
+
+                    <div style="margin-bottom: 16px;">
+                        <label
+                            style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">Stop
+                            Command *</label>
+                        <textarea name="command_stop" id="svcStop" required rows="2"
+                            placeholder="e.g. taskkill /F /IM node.exe"
+                            style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: var(--border-glass); border-radius: 8px; color: white; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem;"></textarea>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+                        <div>
+                            <label
+                                style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">Check
+                                Keyword</label>
+                            <input type="text" name="check_keyword" id="svcKeyword" placeholder="e.g. node"
+                                style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: var(--border-glass); border-radius: 8px; color: white;">
+                        </div>
+                        <div>
+                            <label
+                                style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">Log
+                                File Path</label>
+                            <input type="text" name="log_file" id="svcLog" placeholder="e.g. logs/backend/current.log"
+                                style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: var(--border-glass); border-radius: 8px; color: white;">
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 24px;">
+                        <label
+                            style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">Config
+                            File Path</label>
+                        <input type="text" name="config_file" id="svcConfig" placeholder="e.g. C:/path/to/.env"
+                            style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: var(--border-glass); border-radius: 8px; color: white;">
+                    </div>
+
+                    <div style="display: flex; justify-content: flex-end; gap: 12px;">
+                        <button type="button" onclick="closeModal()" class="btn-pill">Cancel</button>
+                        <button type="submit" class="btn-pill"
+                            style="background: rgba(10, 132, 255, 0.2); color: #0A84FF;">
+                            <i class="bi bi-save me-2"></i> Save Service
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <script>
+            // Store services data for editing
+            const devServices = {{ dev_services_json| safe }};
+            const prodServices = {{ prod_services_json| safe }};
+
+            function showAddForm(env) {
+                document.getElementById('modalTitle').textContent = 'Add New Service (' + env.charAt(0).toUpperCase() + env.slice(1) + ')';
+                document.getElementById('envTarget').value = env;
+                document.getElementById('originalId').value = '';
+                document.getElementById('serviceForm').reset();
+                document.getElementById('serviceModal').style.display = 'flex';
+            }
+
+            function editService(env, serviceId) {
+                const services = env === 'development' ? devServices : prodServices;
+                const svc = services.find(s => s.id === serviceId);
+                if (!svc) return;
+
+                document.getElementById('modalTitle').textContent = 'Edit Service (' + env.charAt(0).toUpperCase() + env.slice(1) + ')';
+                document.getElementById('envTarget').value = env;
+                document.getElementById('originalId').value = serviceId;
+                document.getElementById('svcId').value = svc.id || '';
+                document.getElementById('svcName').value = svc.name || '';
+                document.getElementById('svcGroup').value = svc.group || 'Other';
+                document.getElementById('svcUrl').value = svc.url || '';
+                document.getElementById('svcType').value = svc.type || 'node';
+                document.getElementById('svcStart').value = svc.command_start || '';
+                document.getElementById('svcStop').value = svc.command_stop || '';
+                document.getElementById('svcKeyword').value = svc.check_keyword || '';
+                document.getElementById('svcLog').value = svc.log_file || '';
+                document.getElementById('svcConfig').value = svc.config_file || '';
+                document.getElementById('serviceModal').style.display = 'flex';
+            }
+
+            function closeModal() {
+                document.getElementById('serviceModal').style.display = 'none';
+            }
+
+            // Close modal on escape key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') closeModal();
+            });
+        </script>
+        {% endblock %}

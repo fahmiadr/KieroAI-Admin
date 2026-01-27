@@ -1,0 +1,49 @@
+{
+    "environment_name": "Production (Local Staging)",
+    "services": [
+        {
+            "id": "kawalo_backend",
+            "name": "Kawalo Backend API",
+            "type": "node",
+            "category": "backend",
+            "group": "Kawalo Core",
+            "url": "http://localhost:5000",
+            "command_start": "python log_manager.py --name backend --cmd \"cd C:/laragon/www/kawalo-web-admin/backend && npm start\" --log_dir logs/backend",
+            "command_stop": "taskkill /F /IM node.exe",
+            "check_keyword": "node",
+            "log_file": "logs/backend/current.log",
+            "config_file": "C:/laragon/www/kawalo-web-admin/backend/.env"
+        },
+        {
+            "id": "kawalo_frontend",
+            "name": "Kawalo Frontend",
+            "type": "node",
+            "category": "frontend",
+            "group": "Kawalo Core",
+            "url": "http://localhost:5173",
+            "command_start": "python log_manager.py --name frontend --cmd \"cd C:/laragon/www/kawalo-web-admin/frontend && npm run dev\" --log_dir logs/frontend",
+            "command_stop": "taskkill /F /IM node.exe",
+            "check_keyword": "vite",
+            "log_file": "logs/frontend/current.log",
+            "config_file": "C:/laragon/www/kawalo-web-admin/frontend/.env"
+        },
+        {
+            "id": "mysql_db",
+            "name": "MySQL Database (kawalo_db)",
+            "type": "laragon",
+            "category": "backend",
+            "group": "Infrastructure",
+            "command_start": "net start MySQL",
+            "command_stop": "net stop MySQL",
+            "check_keyword": "mysqld",
+            "log_file": "C:/laragon/bin/mysql/mysql-8.0.30-winx64/data/LENOVO.err",
+            "config_file": "C:/laragon/bin/mysql/mysql-8.0.30-winx64/my.ini",
+            "db_connection": {
+                "host": "localhost",
+                "user": "root",
+                "password": "",
+                "database": "kawalo_db"
+            }
+        }
+    ]
+}
