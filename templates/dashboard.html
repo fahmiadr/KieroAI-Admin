@@ -83,7 +83,8 @@
             <button class="accordion-button {{ 'collapsed' if not loop.first }}" type="button" data-bs-toggle="collapse"
                 data-bs-target="#collapse{{ loop.index }}" aria-expanded="{{ 'true' if loop.first else 'false' }}"
                 aria-controls="collapse{{ loop.index }}" style="background: rgba(255, 255, 255, 0.05); color: #fff;">
-                <i class="bi bi-folder2-open me-2"></i> {{ group }}
+                <i class="bi {{ 'bi-hdd-network' if group == 'Infrastructure' else 'bi-app-indicator' }} me-2"></i> {{
+                group }}
                 <span class="badge bg-primary rounded-pill ms-2" style="font-size: 0.7rem;">{{ services|length }}</span>
             </button>
         </h2>
@@ -96,7 +97,7 @@
                         <!-- Col 1: Service Info -->
                         <div class="service-info-col">
                             <div class="service-icon">
-                                <i class="bi {{ 'bi-server' if service.type == 'node' else 'bi-database' }}"></i>
+                                <i class="bi {{ service.icon if service.icon else 'bi-window' }}"></i>
                             </div>
                             <div>
                                 <h3 class="service-name">{{ service.name }}</h3>
@@ -106,22 +107,10 @@
 
                         <!-- Col 2: Actions (Center) -->
                         <div class="service-actions-col">
-                            <div class="action-group">
-                                {% if service.status == 'Running' %}
-                                <a href="/action/{{ service.id }}/stop" class="btn-icon danger" title="Stop Service">
-                                    <i class="bi bi-stop-fill"></i>
-                                </a>
-                                <a href="/action/{{ service.id }}/start" class="btn-icon disabled" title="Running">
-                                    <i class="bi bi-play-fill"></i>
-                                </a>
-                                {% else %}
-                                <a href="/action/{{ service.id }}/stop" class="btn-icon disabled" title="Stopped">
-                                    <i class="bi bi-stop-fill"></i>
-                                </a>
-                                <a href="/action/{{ service.id }}/start" class="btn-icon success" title="Start Service">
-                                    <i class="bi bi-play-fill"></i>
-                                </a>
-                                {% endif %}
+                            <div class="form-check form-switch custom-switch">
+                                <input class="form-check-input" type="checkbox" role="switch"
+                                    id="switch-{{ service.id }}" {{ 'checked' if service.status=='Running' else '' }}
+                                    onchange="toggleService('{{ service.id }}', this.checked)">
                             </div>
                             <div class="divider-vertical"></div>
                             <div class="action-group">
@@ -160,4 +149,20 @@
     <p>No services configured in {{ data.environment_name }}</p>
 </div>
 {% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function toggleService(serviceId, isChecked) {
+        // Disable switch immediately to prevent double clicks
+        const switchEl = document.getElementById('switch-' + serviceId);
+        switchEl.disabled = true;
+
+        // Determine action
+        const action = isChecked ? 'start' : 'stop';
+
+        // Redirect to action
+        window.location.href = `/action/${serviceId}/${action}`;
+    }
+</script>
 {% endblock %}

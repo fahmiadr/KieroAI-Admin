@@ -73,7 +73,7 @@
         <h5
             style="color: var(--text-tertiary); text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.05em; margin-bottom: 12px; margin-left: 8px;">
             Global Configuration (config_app.json)</h5>
-        <div class="editor-container" style="height: 400px;">
+        <div class="editor-container" style="height: 300px;">
             <div class="log-header" style="background: #252526; border-bottom: 1px solid #1e1e1e;">
                 <div class="window-actions">
                     <div class="window-dot red"></div>
@@ -99,6 +99,75 @@
         </div>
     </div>
 
+    <!-- Service Registry Editor Section -->
+    <div class="col-12 mb-4">
+        <h5
+            style="color: var(--text-tertiary); text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.05em; margin-bottom: 12px; margin-left: 8px;">
+            Service Registry Configuration</h5>
+
+        <!-- Tab Navigation -->
+        <div style="display: flex; gap: 8px; margin-bottom: 16px;">
+            <button onclick="switchRegistryTab('dev')" id="tabDev" class="btn-pill"
+                style="background: linear-gradient(135deg, rgba(48, 209, 88, 0.3), rgba(52, 199, 89, 0.2)); color: #30D158; border: 1px solid rgba(48, 209, 88, 0.3);">
+                <i class="bi bi-code-slash"></i> Development
+            </button>
+            <button onclick="switchRegistryTab('prod')" id="tabProd" class="btn-pill"
+                style="background: transparent; color: var(--text-secondary); border: 1px solid rgba(255,255,255,0.1);">
+                <i class="bi bi-rocket-takeoff"></i> Production
+            </button>
+        </div>
+
+        <!-- Development Registry Editor -->
+        <div id="registryDevPanel" class="editor-container" style="height: 450px;">
+            <div class="log-header" style="background: #252526; border-bottom: 1px solid #1e1e1e;">
+                <div class="window-actions">
+                    <div class="window-dot red"></div>
+                    <div class="window-dot yellow"></div>
+                    <div class="window-dot green"></div>
+                </div>
+                <div
+                    style="font-family: -apple-system; font-size: 0.8rem; color: #30D158; margin-left: 12px; display: flex; align-items: center; gap: 6px;">
+                    <i class="bi bi-file-earmark-code"></i> registry_dev.json
+                </div>
+                <div style="margin-left: auto;">
+                    <button type="submit" form="registryDevForm" class="btn-pill"
+                        style="background: rgba(48, 209, 88, 0.2); color: #30D158;">
+                        <i class="bi bi-save"></i> Save Development
+                    </button>
+                </div>
+            </div>
+            <form id="registryDevForm" method="POST" action="{{ url_for('save_registry', env_type='dev') }}"
+                style="flex: 1; display: flex; flex-direction: column;">
+                <textarea name="registry_json" class="config-textarea">{{ registry_dev_json }}</textarea>
+            </form>
+        </div>
+
+        <!-- Production Registry Editor -->
+        <div id="registryProdPanel" class="editor-container" style="height: 450px; display: none;">
+            <div class="log-header" style="background: #252526; border-bottom: 1px solid #1e1e1e;">
+                <div class="window-actions">
+                    <div class="window-dot red"></div>
+                    <div class="window-dot yellow"></div>
+                    <div class="window-dot green"></div>
+                </div>
+                <div
+                    style="font-family: -apple-system; font-size: 0.8rem; color: #FF9F0A; margin-left: 12px; display: flex; align-items: center; gap: 6px;">
+                    <i class="bi bi-file-earmark-code"></i> registry_prod.json
+                </div>
+                <div style="margin-left: auto;">
+                    <button type="submit" form="registryProdForm" class="btn-pill"
+                        style="background: rgba(255, 159, 10, 0.2); color: #FF9F0A;">
+                        <i class="bi bi-save"></i> Save Production
+                    </button>
+                </div>
+            </div>
+            <form id="registryProdForm" method="POST" action="{{ url_for('save_registry', env_type='prod') }}"
+                style="flex: 1; display: flex; flex-direction: column;">
+                <textarea name="registry_json" class="config-textarea">{{ registry_prod_json }}</textarea>
+            </form>
+        </div>
+    </div>
+
     <!-- Application Info -->
     <div class="col-12">
         <div class="stat-card" style="text-align: center; padding: 24px;">
@@ -107,4 +176,33 @@
         </div>
     </div>
 </div>
+
+<script>
+    function switchRegistryTab(tab) {
+        const devPanel = document.getElementById('registryDevPanel');
+        const prodPanel = document.getElementById('registryProdPanel');
+        const tabDev = document.getElementById('tabDev');
+        const tabProd = document.getElementById('tabProd');
+
+        if (tab === 'dev') {
+            devPanel.style.display = 'flex';
+            prodPanel.style.display = 'none';
+            tabDev.style.background = 'linear-gradient(135deg, rgba(48, 209, 88, 0.3), rgba(52, 199, 89, 0.2))';
+            tabDev.style.color = '#30D158';
+            tabDev.style.border = '1px solid rgba(48, 209, 88, 0.3)';
+            tabProd.style.background = 'transparent';
+            tabProd.style.color = 'var(--text-secondary)';
+            tabProd.style.border = '1px solid rgba(255,255,255,0.1)';
+        } else {
+            devPanel.style.display = 'none';
+            prodPanel.style.display = 'flex';
+            tabProd.style.background = 'linear-gradient(135deg, rgba(255, 159, 10, 0.3), rgba(255, 214, 10, 0.2))';
+            tabProd.style.color = '#FF9F0A';
+            tabProd.style.border = '1px solid rgba(255, 159, 10, 0.3)';
+            tabDev.style.background = 'transparent';
+            tabDev.style.color = 'var(--text-secondary)';
+            tabDev.style.border = '1px solid rgba(255,255,255,0.1)';
+        }
+    }
+</script>
 {% endblock %}

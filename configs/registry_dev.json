@@ -12,7 +12,8 @@
             "command_stop": "echo 'Service Stopped'",
             "check_keyword": "python",
             "log_file": "./test_log.txt",
-            "config_file": "./.env"
+            "config_file": "./.env",
+            "web_directory": ""
         },
         {
             "id": "mendawai",
@@ -23,7 +24,8 @@
             "command_stop": "taskkill",
             "check_keyword": "",
             "log_file": "logs/mendawai/log_file",
-            "config_file": "path/log/env."
+            "config_file": "path/log/env.",
+            "web_directory": ""
         }
     ]
 }

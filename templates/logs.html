@@ -4,13 +4,24 @@
 
 {% block content %}
 <!-- Header with AI Doctor Button -->
+<!-- Header with Actions -->
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
     <div style="display: flex; align-items: center; gap: 12px;">
         <a href="{{ url_for('dashboard') }}" class="btn-icon">
             <i class="bi bi-arrow-left"></i>
         </a>
         <div>
-            <div style="font-size: 0.8rem; color: var(--text-tertiary);">{{ service.log_file }}</div>
+            <div style="font-weight: 700; font-size: 1.1rem; display: flex; align-items: center; gap: 8px;">
+                {{ service.name }}
+                <span
+                    style="font-size: 0.75rem; font-weight: 400; color: var(--text-tertiary); background: rgba(255,255,255,0.05); padding: 2px 8px; border-radius: 4px;">
+                    <i class="bi bi-folder2-open"></i> {{ computed_web_dir }}
+                </span>
+            </div>
+            <div id="currentLogPath"
+                style="font-size: 0.8rem; color: var(--text-tertiary); margin-top: 2px; display: flex; align-items: center; gap: 6px;">
+                <i class="bi bi-file-text" style="font-size: 0.75rem;"></i> {{ service.log_file }}
+            </div>
         </div>
     </div>
     <div style="display: flex; gap: 12px;">
@@ -24,59 +35,74 @@
     </div>
 </div>
 
-<!-- AI Result Panel (Hidden by Default) -->
-<div id="aiResultCard" style="display: none; margin-bottom: 24px;">
-    <div class="stat-card" style="border: 1px solid rgba(255, 214, 10, 0.3); background: rgba(30, 30, 30, 0.8);">
-        <div
-            style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.1);">
-            <div style="display: flex; align-items: center; gap: 10px;">
-                <div
-                    style="width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, #FFD60A, #FF9F0A); display: grid; place-items: center;">
-                    <i class="bi bi-robot" style="color: black; font-size: 1.2rem;"></i>
-                </div>
-                <div>
-                    <div style="font-weight: 700; font-size: 1rem;">AI Doctor</div>
-                    <div style="font-size: 0.75rem; color: var(--text-tertiary);">Powered by Google Gemini</div>
-                </div>
-            </div>
-            <button onclick="document.getElementById('aiResultCard').style.display='none'" class="btn-icon">
-                <i class="bi bi-x-lg"></i>
+<div class="logs-layout">
+    <!-- Sidebar: App Directory -->
+    <div class="logs-sidebar">
+        <div class="logs-sidebar-header">
+            <span style="display: flex; align-items: center; gap: 6px;">
+                <i class="bi bi-files" style="color: #bbb;"></i> EXPLORER
+            </span>
+            <button onclick="reloadTree()" class="btn-icon-small" title="Refresh Explorer" style="color: #bbb;">
+                <i class="bi bi-arrow-clockwise"></i>
             </button>
         </div>
 
-        <!-- Loading State -->
-        <div id="aiLoading" style="text-align: center; padding: 32px;">
-            <div
-                style="width: 40px; height: 40px; border: 3px solid rgba(255, 214, 10, 0.2); border-top-color: #FFD60A; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto;">
+        <div class="logs-sidebar-content custom-scrollbar" style="padding-top: 4px;">
+            <!-- Root Tree Container -->
+            <div id="fileTreeRoot">
+                <div style="text-align: center; padding: 24px; color: var(--text-tertiary);">
+                    <i class="bi bi-hourglass-split"></i> Loading...
+                </div>
             </div>
-            <p style="color: var(--text-tertiary); margin-top: 12px;">Menganalisis log dan mencari solusi...</p>
-        </div>
-
-        <!-- Result Content -->
-        <div id="aiContent" style="display: none;"></div>
-    </div>
-</div>
-
-<!-- Log Viewer (Terminal Style) -->
-<div class="log-container">
-    <div class="log-header">
-        <div class="window-actions">
-            <div class="window-dot red"></div>
-            <div class="window-dot yellow"></div>
-            <div class="window-dot green"></div>
-        </div>
-        <div
-            style="font-family: -apple-system; font-size: 0.8rem; font-weight: 600; color: rgba(255,255,255,0.5); display: flex; align-items: center; gap: 8px;">
-            <i class="bi bi-terminal-fill"></i>
-            {{ service.name }}
-        </div>
-        <div style="margin-left: auto; font-size: 0.75rem; color: var(--text-tertiary);">
-            Last 50 lines
         </div>
     </div>
 
-    <div class="log-box" id="logBox">
-        <pre style="margin: 0; white-space: pre-wrap;">{{ content }}</pre>
+    <!-- Main Content: Log Viewer / File Editor -->
+    <div class="logs-main">
+        <!-- AI Result Panel (Hidden by Default) -->
+        <div id="aiResultCard" style="display: none;">
+            <div class="stat-card"
+                style="border: 1px solid rgba(255, 214, 10, 0.3); background: rgba(30, 30, 30, 0.8);">
+                <div
+                    style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <i class="bi bi-robot" style="color: #FFD60A; font-size: 1.2rem;"></i>
+                        <span style="font-weight: 700;">AI Doctor Analysis</span>
+                    </div>
+                    <button onclick="document.getElementById('aiResultCard').style.display='none'" class="btn-icon"><i
+                            class="bi bi-x-lg"></i></button>
+                </div>
+                <div id="aiLoading" style="text-align: center; padding: 20px;">
+                    <div
+                        style="width: 30px; height: 30px; border: 3px solid rgba(255, 214, 10, 0.2); border-top-color: #FFD60A; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto;">
+                    </div>
+                    <p style="color: var(--text-tertiary); font-size: 0.85rem; margin-top: 8px;">Analyzing...</p>
+                </div>
+                <div id="aiContent" style="display: none; font-size: 0.9rem;"></div>
+            </div>
+        </div>
+
+        <!-- Log Viewer Container -->
+        <div class="log-container" style="flex: 1; height: 100%; display: flex; flex-direction: column;">
+            <div class="log-header">
+                <div class="window-actions">
+                    <div class="window-dot red"></div>
+                    <div class="window-dot yellow"></div>
+                    <div class="window-dot green"></div>
+                </div>
+                <div id="fileViewerTitle"
+                    style="font-family: -apple-system; font-size: 0.8rem; font-weight: 600; color: rgba(255,255,255,0.5); display: flex; align-items: center; gap: 8px;">
+                    <i class="bi bi-terminal-fill"></i> Log Output
+                </div>
+                <div style="margin-left: auto; font-size: 0.75rem; color: var(--text-tertiary);">
+                    <span id="fileViewerMeta">Last 50 lines</span>
+                </div>
+            </div>
+
+            <div class="log-box" id="logBox" style="flex: 1; overflow: auto;">
+                <pre style="margin: 0; white-space: pre-wrap;">{{ content }}</pre>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -89,10 +115,16 @@
 </style>
 
 <script>
-    // Auto-scroll to bottom
+    // Initial Scroll
     const logBox = document.getElementById('logBox');
-    logBox.scrollTop = logBox.scrollHeight;
+    if (logBox) logBox.scrollTop = logBox.scrollHeight;
 
+    // Initialize Page
+    document.addEventListener('DOMContentLoaded', () => {
+        reloadTree(); // Auto-load sidebar
+    });
+
+    // ============ AI DOCTOR FUNCTIONS ============
     function analyzeLog() {
         const serviceId = "{{ service.id }}";
         const ui = {
@@ -107,7 +139,7 @@
         ui.loading.style.display = 'block';
         ui.content.style.display = 'none';
         ui.btn.disabled = true;
-        ui.btn.innerHTML = '<i class="bi bi-hourglass-split"></i> Menganalisa...';
+        ui.btn.innerHTML = '<i class="bi bi-hourglass-split"></i> Analyzing...';
 
         // Call Backend API
         fetch(`/analyze_log/${serviceId}`, { method: 'POST' })
@@ -131,10 +163,190 @@
             .catch(err => {
                 ui.loading.style.display = 'none';
                 ui.content.style.display = 'block';
-                ui.content.innerHTML = `<div style="background: rgba(255, 69, 58, 0.15); border-radius: 10px; padding: 14px;"><i class="bi bi-wifi-off"></i> Koneksi Gagal: ${err}</div>`;
+                ui.content.innerHTML = `<div style="background: rgba(255, 69, 58, 0.15); border-radius: 10px; padding: 14px;"><i class="bi bi-wifi-off"></i> Connection Failed: ${err}</div>`;
                 ui.btn.disabled = false;
                 ui.btn.innerHTML = '<i class="bi bi-stars"></i> AI Doctor';
             });
+    }
+
+    // ============ TREE VIEW FUNCTIONS ============
+    const serviceId = "{{ service.id }}";
+    let baseDirectory = '';
+
+    function reloadTree() {
+        const root = document.getElementById('fileTreeRoot');
+        root.innerHTML = `<div style="text-align: center; padding: 24px; color: var(--text-tertiary);"><i class="bi bi-hourglass-split"></i> Loading...</div>`;
+
+        loadLevel('', root);
+    }
+
+    // Load directory content into a container
+    function loadLevel(subPath, container) {
+        let url = `/logs/${serviceId}/web-directories`;
+        if (subPath) {
+            url += `?path=${encodeURIComponent(subPath)}`;
+        }
+
+        fetch(url)
+            .then(res => res.json())
+            .then(data => {
+                if (data.error) {
+                    container.innerHTML = `<div style="color: #FF453A; padding: 8px; font-size: 0.8rem;"><i class="bi bi-exclamation-triangle"></i> ${data.error}</div>`;
+                    return;
+                }
+
+                if (!baseDirectory) baseDirectory = data.base_directory;
+
+                if (data.items.length === 0) {
+                    container.innerHTML = `<div style="padding: 4px 12px; color: #666; font-size: 0.8rem; font-style: italic;">Empty</div>`;
+                    return;
+                }
+
+                container.innerHTML = ''; // Clear loading/previous
+
+                data.items.forEach(item => {
+                    const el = createTreeItem(item);
+                    container.appendChild(el);
+                });
+            })
+            .catch(err => {
+                container.innerHTML = `<div style="color: #FF453A; padding: 8px; font-size: 0.8rem;"><i class="bi bi-wifi-off"></i> Error</div>`;
+            });
+    }
+
+    function createTreeItem(item) {
+        // Wrapper
+        const wrapper = document.createElement('div');
+
+        // Main Item Row
+        const row = document.createElement('div');
+        row.className = 'tree-item';
+
+        // Icon logic
+        const { icon, color } = getFileIcon(item.name, item.is_dir);
+
+        // Chevron (for dirs only)
+        let chevronHtml = '';
+        if (item.is_dir) {
+            chevronHtml = `<i class="bi bi-chevron-right tree-toggle"></i>`;
+        } else {
+            chevronHtml = `<span style="width: 16px; margin-right: 6px;"></span>`; // Spacer
+        }
+
+        row.innerHTML = `
+            ${chevronHtml}
+            <i class="bi ${icon}" style="font-size: 0.9rem; color: ${color}; margin-right: 8px;"></i>
+            <span style="overflow: hidden; text-overflow: ellipsis;">${item.name}</span>
+        `;
+
+        // Click Handler
+        row.onclick = (e) => {
+            e.stopPropagation();
+
+            // Highlight active
+            document.querySelectorAll('.tree-item').forEach(el => el.classList.remove('active'));
+            row.classList.add('active');
+
+            if (item.is_dir) {
+                toggleDirectory(item.path, row, wrapper);
+            } else {
+                selectWebFile(item.full_path, item.name);
+            }
+        };
+
+        wrapper.appendChild(row);
+
+        // Children Container (initially hidden)
+        if (item.is_dir) {
+            const childrenContainer = document.createElement('div');
+            childrenContainer.className = 'tree-children';
+            childrenContainer.dataset.loaded = 'false';
+            childrenContainer.dataset.path = item.path;
+            wrapper.appendChild(childrenContainer);
+        }
+
+        return wrapper;
+    }
+
+    function toggleDirectory(path, rowElement, wrapperElement) {
+        const childrenContainer = wrapperElement.querySelector('.tree-children');
+        const toggleIcon = rowElement.querySelector('.tree-toggle');
+
+        if (childrenContainer.style.display === 'block') {
+            // Collapse
+            childrenContainer.style.display = 'none';
+            toggleIcon.classList.remove('expanded');
+        } else {
+            // Expand
+            childrenContainer.style.display = 'block';
+            toggleIcon.classList.add('expanded');
+
+            // Load if not loaded
+            if (childrenContainer.dataset.loaded === 'false') {
+                childrenContainer.innerHTML = `<div style="padding: 4px 12px; color: #666; font-size: 0.8rem;"><i class="bi bi-hourglass-split"></i> Loading...</div>`;
+                loadLevel(path, childrenContainer);
+                childrenContainer.dataset.loaded = 'true';
+            }
+        }
+    }
+
+    function selectWebFile(filePath, fileName) {
+        const logBox = document.getElementById('logBox');
+        const fileViewerTitle = document.getElementById('fileViewerTitle');
+        const fileViewerMeta = document.getElementById('fileViewerMeta');
+
+        logBox.innerHTML = '<pre style="margin: 0; white-space: pre-wrap; text-align: center; color: var(--text-tertiary); padding: 48px;"><i class="bi bi-hourglass-split"></i> Loading content...</pre>';
+
+        // Update Title
+        const { icon, color } = getFileIcon(fileName, false);
+        fileViewerTitle.innerHTML = `<i class="bi ${icon}" style="color: ${color}"></i> ${fileName}`;
+        fileViewerMeta.textContent = filePath;
+
+        fetch(`/logs/${serviceId}/web-file?path=${encodeURIComponent(filePath)}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.error) {
+                    logBox.innerHTML = `<pre style="margin: 0; white-space: pre-wrap; color: #FF453A; padding: 20px;"><i class="bi bi-exclamation-circle"></i> Error: ${data.error}</pre>`;
+                    return;
+                }
+
+                logBox.innerHTML = `<pre style="margin: 0; white-space: pre-wrap;">${escapeHtml(data.content)}</pre>`;
+                logBox.scrollTop = 0;
+            })
+            .catch(err => {
+                logBox.innerHTML = `<pre style="margin: 0; white-space: pre-wrap; color: #FF453A; padding: 20px;"><i class="bi bi-wifi-off"></i> Connection failed: ${err}</pre>`;
+            });
+    }
+
+    function getFileIcon(filename, isDir) {
+        if (isDir) return { icon: 'bi-folder-fill', color: '#42a5f5' };
+
+        const ext = filename.split('.').pop().toLowerCase();
+        const iconMap = {
+            'js': { icon: 'bi-filetype-js', color: '#F7DF1E' },
+            'jsx': { icon: 'bi-filetype-jsx', color: '#61DAFB' },
+            'ts': { icon: 'bi-filetype-tsx', color: '#3178C6' },
+            'tsx': { icon: 'bi-filetype-tsx', color: '#3178C6' },
+            'py': { icon: 'bi-filetype-py', color: '#3776AB' },
+            'html': { icon: 'bi-filetype-html', color: '#E34F26' },
+            'css': { icon: 'bi-filetype-css', color: '#42a5f5' },
+            'json': { icon: 'bi-filetype-json', color: '#cbcb41' },
+            'md': { icon: 'bi-info-circle', color: '#9d65ff' },
+            'env': { icon: 'bi-gear-fill', color: '#9e9e9e' },
+            'sql': { icon: 'bi-database-fill', color: '#CC2927' },
+            'yml': { icon: 'bi-file-earmark-code', color: '#CB171E' },
+            'yaml': { icon: 'bi-file-earmark-code', color: '#CB171E' },
+            'txt': { icon: 'bi-file-text', color: '#9e9e9e' },
+            'log': { icon: 'bi-file-text', color: '#9e9e9e' }
+        };
+
+        return iconMap[ext] || { icon: 'bi-file-earmark', color: '#cccccc' };
+    }
+
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
     }
 </script>
 {% endblock %}

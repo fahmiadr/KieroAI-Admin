@@ -1,0 +1,18 @@
+
+> kawalo-security-backend@1.0.0 start
+> node server.js
+
+[dotenv@17.2.3] injecting env (5) from .env -- tip: ⚙️  override existing env vars with { override: true }
+[dotenv@17.2.3] injecting env (0) from .env -- tip: ⚙️  write to custom object with { processEnv: myObject }
+Notification Poller started...
+Server is running on port 5000
+MySQL Database connected successfully.
+
+> kawalo-security-backend@1.0.0 start
+> node server.js
+
+[dotenv@17.2.3] injecting env (5) from .env -- tip: 🔑 add access controls to secrets: https://dotenvx.com/ops
+[dotenv@17.2.3] injecting env (0) from .env -- tip: ✅ audit secrets and track compliance: https://dotenvx.com/ops
+Notification Poller started...
+Server is running on port 5000
+MySQL Database connected successfully.

@@ -1,0 +1,18 @@
+
+> kawalo-security-backend@1.0.0 start
+> node server.js
+
+[dotenv@17.2.3] injecting env (5) from .env -- tip: 🗂️ backup and recover secrets: https://dotenvx.com/ops
+[dotenv@17.2.3] injecting env (0) from .env -- tip: 🔐 prevent building .env in docker: https://dotenvx.com/prebuild
+Notification Poller started...
+Server is running on port 5000
+MySQL Database connected successfully.
+
+> kawalo-security-backend@1.0.0 start
+> node server.js
+
+[dotenv@17.2.3] injecting env (5) from .env -- tip: 🔑 add access controls to secrets: https://dotenvx.com/ops
+[dotenv@17.2.3] injecting env (0) from .env -- tip: ⚙️  suppress all logs with { quiet: true }
+Notification Poller started...
+Server is running on port 5000
+MySQL Database connected successfully.
