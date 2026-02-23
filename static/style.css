@@ -1,39 +1,73 @@
 /* ============================
-   KIERO Ops - MacOS Glassmorphism (V5)
-   "Frosted Glass" Premium Aesthetic
+   KIERO Ops - SKEUOMORPHISM (V6)
+   "Brushed Metal & Hardware Control Panel"
+   Realistic textures, 3D depth, tactile UI
    ============================ */
 
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
 :root {
-    /* MacOS Dark Palette */
-    --accent: #0A84FF;
-    /* iOS Blue */
-    --bg-app: #000000;
-    --bg-sidebar: rgba(28, 28, 30, 0.6);
-    --bg-glass: rgba(30, 30, 30, 0.45);
-    --bg-glass-strong: rgba(44, 44, 46, 0.65);
+    /* Skeuomorphic Metal Palette */
+    --accent: #3a9bdc;
+    --accent-dark: #2a7ab8;
+    --accent-glow: rgba(58, 155, 220, 0.4);
 
-    /* Borders */
-    --border-glass: 1px solid rgba(255, 255, 255, 0.12);
-    --border-subtle: 1px solid rgba(255, 255, 255, 0.06);
+    /* Surface Colors */
+    --bg-app: #2b2d31;
+    --bg-sidebar: #232529;
+    --bg-panel: #35383e;
+    --bg-panel-raised: #3e4148;
+    --bg-inset: #1e2024;
+    --bg-deep-inset: #191b1f;
+
+    /* Metal Gradients */
+    --metal-light: linear-gradient(180deg, #44474e 0%, #3a3d44 50%, #35383e 100%);
+    --metal-dark: linear-gradient(180deg, #2e3136 0%, #282b30 50%, #232529 100%);
+    --metal-btn: linear-gradient(180deg, #4a4e56 0%, #3e4148 40%, #35383e 100%);
+    --metal-btn-hover: linear-gradient(180deg, #52565e 0%, #44474e 40%, #3a3d44 100%);
+    --metal-btn-pressed: linear-gradient(180deg, #2e3136 0%, #35383e 100%);
+
+    /* Borders & Bevels */
+    --bevel-highlight: rgba(255, 255, 255, 0.1);
+    --bevel-shadow: rgba(0, 0, 0, 0.5);
+    --border-raised: 1px solid rgba(255, 255, 255, 0.08);
+    --border-inset: 1px solid rgba(0, 0, 0, 0.4);
+
+    /* Shadows */
+    --shadow-raised: 0 2px 4px rgba(0, 0, 0, 0.3), 0 4px 12px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    --shadow-panel: 0 3px 8px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    --shadow-inset: inset 0 2px 6px rgba(0, 0, 0, 0.5), inset 0 1px 2px rgba(0, 0, 0, 0.3);
+    --shadow-deep-inset: inset 0 3px 8px rgba(0, 0, 0, 0.6), inset 0 1px 3px rgba(0, 0, 0, 0.4);
+    --shadow-btn: 0 2px 4px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    --shadow-btn-pressed: inset 0 2px 4px rgba(0, 0, 0, 0.5), inset 0 1px 2px rgba(0, 0, 0, 0.3);
 
     /* Text */
-    --text-primary: rgba(255, 255, 255, 0.95);
-    --text-secondary: rgba(255, 255, 255, 0.65);
-    --text-tertiary: rgba(255, 255, 255, 0.45);
+    --text-primary: #e4e6ea;
+    --text-secondary: #a0a4ab;
+    --text-tertiary: #6b7078;
+    --text-emboss: 0 1px 2px rgba(0, 0, 0, 0.6);
 
     /* Compatibility Aliases */
-    --border-light: rgba(255, 255, 255, 0.08);
-    --bg-card: rgba(30, 30, 30, 0.45);
-    --text-muted: rgba(255, 255, 255, 0.45);
-    --primary: #0A84FF;
+    --border-light: rgba(255, 255, 255, 0.06);
+    --bg-card: #35383e;
+    --bg-glass: #35383e;
+    --bg-glass-strong: #3e4148;
+    --text-muted: #6b7078;
+    --primary: #3a9bdc;
+    --border-subtle: 1px solid rgba(255, 255, 255, 0.06);
+    --border-glass: 1px solid rgba(255, 255, 255, 0.08);
 
-    /* System Metrics */
-    --radius-window: 16px;
-    --radius-item: 10px;
-    --blur-strength: 30px;
+    /* Metrics */
+    --radius-panel: 12px;
+    --radius-item: 8px;
+    --radius-btn: 8px;
     --sidebar-w: 260px;
+
+    /* LED Colors */
+    --led-green: #39e75f;
+    --led-red: #ff4444;
+    --led-orange: #ffb020;
+    --led-blue: #3a9bdc;
 }
 
 * {
@@ -43,12 +77,16 @@
 
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', sans-serif;
-    /* System Fonts Priority */
     background-color: var(--bg-app);
-    /* Abstract colorful gradients for glass effect to show */
+    /* Brushed metal texture via repeating gradient */
     background-image:
-        radial-gradient(at 10% 10%, rgba(10, 132, 255, 0.15) 0px, transparent 40%),
-        radial-gradient(at 90% 90%, rgba(191, 90, 242, 0.1) 0px, transparent 40%);
+        repeating-linear-gradient(0deg,
+            transparent,
+            transparent 2px,
+            rgba(255, 255, 255, 0.008) 2px,
+            rgba(255, 255, 255, 0.008) 4px),
+        radial-gradient(ellipse at 20% 50%, rgba(58, 155, 220, 0.03) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 50%, rgba(255, 176, 32, 0.02) 0%, transparent 60%);
     color: var(--text-primary);
     margin: 0;
     height: 100vh;
@@ -68,39 +106,45 @@ a {
     height: 100vh;
 }
 
-/* --- Sidebar (Mac-style) --- */
+/* ========================================
+   SIDEBAR (Brushed Metal Panel)
+   ======================================== */
 .sidebar {
-    background: var(--bg-sidebar);
-    backdrop-filter: blur(var(--blur-strength));
-    -webkit-backdrop-filter: blur(var(--blur-strength));
-    border-right: var(--border-glass);
-    padding: 32px 20px;
+    background: var(--metal-dark);
+    border-right: 1px solid rgba(0, 0, 0, 0.5);
+    box-shadow: 2px 0 12px rgba(0, 0, 0, 0.3), inset -1px 0 0 rgba(255, 255, 255, 0.04);
+    padding: 24px 16px;
     display: flex;
     flex-direction: column;
 }
 
+/* Brand */
 .brand {
     display: flex;
     align-items: center;
     gap: 12px;
-    margin-bottom: 32px;
+    margin-bottom: 28px;
     padding: 0 8px;
 }
 
 .brand-icon {
-    width: 36px;
-    height: 36px;
-    background: linear-gradient(135deg, #0A84FF, #5E5CE6);
+    width: 40px;
+    height: 40px;
+    background: var(--metal-btn);
     border-radius: 10px;
     display: grid;
     place-items: center;
-    color: white;
-    box-shadow: 0 4px 12px rgba(10, 132, 255, 0.3);
+    color: var(--accent);
+    font-size: 1.2rem;
+    box-shadow: var(--shadow-raised);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    text-shadow: 0 0 8px var(--accent-glow);
 }
 
 .brand-name {
     font-weight: 700;
     font-size: 1.1rem;
+    text-shadow: var(--text-emboss);
 }
 
 .brand-subtitle {
@@ -109,36 +153,42 @@ a {
     font-weight: 500;
 }
 
+/* Nav Section */
 .nav-section-title {
     font-size: 0.7rem;
     font-weight: 600;
     color: var(--text-tertiary);
-    margin: 24px 12px 8px;
+    margin: 20px 8px 6px;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.08em;
+    text-shadow: var(--text-emboss);
 }
 
 .nav-item {
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 8px 12px;
+    padding: 9px 12px;
     margin-bottom: 2px;
     border-radius: var(--radius-item);
     color: var(--text-secondary);
     font-size: 0.9rem;
     font-weight: 500;
-    transition: background 0.2s;
+    transition: all 0.15s ease;
+    text-shadow: var(--text-emboss);
 }
 
 .nav-item:hover {
-    background: rgba(255, 255, 255, 0.08);
-    color: white;
+    background: var(--metal-btn);
+    box-shadow: var(--shadow-btn);
+    color: var(--text-primary);
 }
 
 .nav-item.active {
-    background: rgba(10, 132, 255, 0.2);
-    color: #60a5fa;
+    background: var(--metal-btn-pressed);
+    box-shadow: var(--shadow-btn-pressed);
+    color: var(--accent);
+    border: 1px solid rgba(0, 0, 0, 0.2);
 }
 
 .nav-item i {
@@ -147,106 +197,116 @@ a {
     text-align: center;
 }
 
-/* Env Switcher (Segmented Control) */
+/* Env Switcher (Physical Toggle Panel) */
 .env-switcher-card {
-    background: rgba(118, 118, 128, 0.24);
+    background: var(--bg-inset);
     border-radius: 8px;
-    padding: 2px;
+    padding: 3px;
     display: flex;
-    margin-bottom: 24px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow-inset);
+    border: 1px solid rgba(0, 0, 0, 0.3);
 }
 
 .env-option {
     flex: 1;
     text-align: center;
-    padding: 6px 0;
+    padding: 7px 0;
     font-size: 0.75rem;
-    font-weight: 600;
+    font-weight: 700;
     border-radius: 6px;
-    color: var(--text-secondary);
-    transition: all 0.2s;
+    color: var(--text-tertiary);
+    transition: all 0.2s ease;
+    letter-spacing: 0.03em;
+    text-shadow: var(--text-emboss);
 }
 
 .env-option:hover {
-    color: white;
+    color: var(--text-secondary);
 }
 
 .env-option.active {
-    background: rgba(99, 99, 102, 0.7);
-    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
-    color: white;
+    background: var(--metal-btn);
+    box-shadow: var(--shadow-btn);
+    color: var(--text-primary);
 }
 
 .env-option.active.prod-active {
-    background: #34C759;
+    background: linear-gradient(180deg, #3db85c 0%, #2e9a4a 100%);
+    color: white;
+    box-shadow: var(--shadow-btn), 0 0 10px rgba(48, 184, 72, 0.3);
 }
 
-/* iOS Green */
 .env-option.active.dev-active {
-    background: #FF9F0A;
+    background: linear-gradient(180deg, #e8a020 0%, #cc8c18 100%);
+    color: white;
+    box-shadow: var(--shadow-btn), 0 0 10px rgba(232, 160, 32, 0.3);
 }
 
-/* iOS Orange */
-
-/* --- Main Content --- */
+/* ========================================
+   MAIN CONTENT
+   ======================================== */
 .main-content {
     display: flex;
     flex-direction: column;
     overflow: hidden;
 }
 
+/* Topbar (Raised Metal Toolbar) */
 .topbar {
-    height: 64px;
+    height: 68px;
     padding: 0 32px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    /* Transparent header like Mac app toolbar */
-    background: rgba(28, 28, 30, 0.3);
-    backdrop-filter: blur(20px);
-    border-bottom: var(--border-subtle);
+    background: var(--metal-light);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.4);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
 .page-title {
-    font-size: 1.6rem;
+    font-size: 1.5rem;
     font-weight: 700;
     margin: 0;
+    text-shadow: var(--text-emboss);
 }
 
 .content-area {
     flex: 1;
     overflow-y: auto;
-    padding: 32px;
+    padding: 28px 32px;
 }
 
-/* --- Stats Grid (Mac Widgets) --- */
+/* ========================================
+   STAT CARDS (Raised Instrument Panels)
+   ======================================== */
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 16px;
-    margin-bottom: 32px;
+    margin-bottom: 28px;
 }
 
 .stat-card {
-    background: var(--bg-glass);
-    backdrop-filter: blur(20px);
-    border-radius: 18px;
-    padding: 18px;
-    border: var(--border-glass);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-    transition: transform 0.2s;
+    background: var(--metal-light);
+    border-radius: var(--radius-panel);
+    padding: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    box-shadow: var(--shadow-panel);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .stat-card:hover {
-    transform: scale(1.02);
-    background: var(--bg-glass-strong);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-panel), 0 6px 20px rgba(0, 0, 0, 0.2);
 }
 
 .stat-value {
     font-size: 1.8rem;
-    font-weight: 600;
+    font-weight: 700;
     letter-spacing: -0.03em;
     margin: 8px 0;
+    text-shadow: var(--text-emboss);
 }
 
 .stat-label {
@@ -254,6 +314,7 @@ a {
     color: var(--text-tertiary);
     font-weight: 600;
     text-transform: uppercase;
+    text-shadow: var(--text-emboss);
 }
 
 .stat-header {
@@ -266,60 +327,73 @@ a {
 .stat-trend {
     font-size: 0.75rem;
     font-weight: 600;
-    padding: 4px 8px;
-    border-radius: 20px;
-    background: rgba(255, 255, 255, 0.05);
+    padding: 4px 10px;
+    border-radius: 6px;
+    background: var(--bg-inset);
+    box-shadow: var(--shadow-inset);
     display: flex;
     align-items: center;
     gap: 4px;
+    text-shadow: var(--text-emboss);
 }
 
+/* Gauge-Style Progress Bars */
 .stat-progress {
-    height: 4px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 4px;
+    height: 8px;
+    background: var(--bg-deep-inset);
+    border-radius: 6px;
     margin-top: 12px;
     overflow: hidden;
+    box-shadow: var(--shadow-deep-inset);
+    border: 1px solid rgba(0, 0, 0, 0.3);
 }
 
 .stat-progress-bar {
     height: 100%;
-    border-radius: 4px;
+    border-radius: 5px;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 0 6px currentColor;
+    transition: width 0.5s ease;
 }
 
 .stat-progress-bar.cpu {
-    background: #0A84FF;
+    background: linear-gradient(180deg, #5cb8f0 0%, #3a9bdc 100%);
+    color: rgba(58, 155, 220, 0.4);
 }
 
 .stat-progress-bar.memory {
-    background: #FF9F0A;
+    background: linear-gradient(180deg, #ffc94d 0%, #ffb020 100%);
+    color: rgba(255, 176, 32, 0.4);
 }
 
 .stat-progress-bar.disk {
-    background: #FF453A;
+    background: linear-gradient(180deg, #ff6666 0%, #ff4444 100%);
+    color: rgba(255, 68, 68, 0.4);
 }
 
-/* --- Services Row (Mac List View) --- */
+/* ========================================
+   SERVICE CARDS (Raised Row Panels)
+   ======================================== */
 .services-grid {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
 }
 
 .service-card.row-layout {
-    background: var(--bg-glass);
-    backdrop-filter: blur(15px);
-    border: var(--border-glass);
-    border-radius: 12px;
-    padding: 16px 20px;
+    background: var(--metal-light);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 10px;
+    padding: 14px 20px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    transition: background 0.2s;
+    box-shadow: var(--shadow-panel);
+    transition: all 0.15s ease;
 }
 
 .service-card.row-layout:hover {
-    background: rgba(50, 50, 50, 0.5);
+    box-shadow: var(--shadow-panel), 0 4px 16px rgba(0, 0, 0, 0.2);
+    border-color: rgba(255, 255, 255, 0.1);
 }
 
 /* Info Col */
@@ -334,11 +408,13 @@ a {
     width: 40px;
     height: 40px;
     border-radius: 10px;
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--metal-btn);
     display: grid;
     place-items: center;
     font-size: 1.2rem;
-    color: white;
+    color: var(--accent);
+    box-shadow: var(--shadow-btn);
+    border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .service-name {
@@ -346,15 +422,16 @@ a {
     font-weight: 600;
     margin: 0;
     color: var(--text-primary);
+    text-shadow: var(--text-emboss);
 }
 
 .service-id {
     font-size: 0.8rem;
     color: var(--text-secondary);
-    font-family: 'JetBrains Mono';
+    font-family: 'JetBrains Mono', monospace;
 }
 
-/* Actions Col (Mac Toolbar Style) */
+/* Actions Col */
 .service-actions-col {
     flex: 2;
     display: flex;
@@ -365,48 +442,62 @@ a {
 .action-group {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
 }
 
 .divider-vertical {
     width: 1px;
-    height: 24px;
-    background: var(--border-light);
-    margin: 0 8px;
+    height: 28px;
+    background: linear-gradient(180deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+    margin: 0 4px;
 }
 
+/* ========================================
+   BUTTONS (3D Raised/Pressed)
+   ======================================== */
 .btn-icon {
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
+    width: 34px;
+    height: 34px;
+    border-radius: var(--radius-btn);
     display: grid;
     place-items: center;
     font-size: 0.9rem;
-    background: rgba(118, 118, 128, 0.2);
-    color: white;
-    transition: background 0.2s;
+    background: var(--metal-btn);
+    color: var(--text-secondary);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    box-shadow: var(--shadow-btn);
+    transition: all 0.12s ease;
+    cursor: pointer;
 }
 
 .btn-icon:hover {
-    background: rgba(118, 118, 128, 0.4);
+    background: var(--metal-btn-hover);
+    color: var(--text-primary);
+    box-shadow: var(--shadow-btn), 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.btn-icon:active {
+    background: var(--metal-btn-pressed);
+    box-shadow: var(--shadow-btn-pressed);
+    transform: translateY(1px);
 }
 
 .btn-icon.success {
-    color: #30D158;
-    background: rgba(48, 209, 88, 0.15);
+    color: var(--led-green);
+    box-shadow: var(--shadow-btn), 0 0 6px rgba(57, 231, 95, 0.15);
 }
 
 .btn-icon.success:hover {
-    background: rgba(48, 209, 88, 0.3);
+    box-shadow: var(--shadow-btn), 0 0 10px rgba(57, 231, 95, 0.25);
 }
 
 .btn-icon.danger {
-    color: #FF453A;
-    background: rgba(255, 69, 58, 0.15);
+    color: var(--led-red);
+    box-shadow: var(--shadow-btn), 0 0 6px rgba(255, 68, 68, 0.15);
 }
 
 .btn-icon.danger:hover {
-    background: rgba(255, 69, 58, 0.3);
+    box-shadow: var(--shadow-btn), 0 0 10px rgba(255, 68, 68, 0.25);
 }
 
 .btn-icon.disabled {
@@ -414,22 +505,46 @@ a {
     cursor: default;
 }
 
-/* Buttons Pill */
+/* Pill Buttons */
 .btn-pill {
-    padding: 6px 14px;
-    border-radius: 14px;
-    background: rgba(118, 118, 128, 0.2);
+    padding: 8px 16px;
+    border-radius: var(--radius-btn);
+    background: var(--metal-btn);
     font-size: 0.8rem;
-    font-weight: 500;
-    color: white;
+    font-weight: 600;
+    color: var(--text-secondary);
     display: flex;
     align-items: center;
     gap: 6px;
-    transition: background 0.2s;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    box-shadow: var(--shadow-btn);
+    transition: all 0.12s ease;
+    cursor: pointer;
+    text-shadow: var(--text-emboss);
 }
 
 .btn-pill:hover {
-    background: rgba(118, 118, 128, 0.4);
+    background: var(--metal-btn-hover);
+    color: var(--text-primary);
+    box-shadow: var(--shadow-btn), 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.btn-pill:active {
+    background: var(--metal-btn-pressed);
+    box-shadow: var(--shadow-btn-pressed);
+    transform: translateY(1px);
+}
+
+.btn-ghost {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: color 0.15s;
+}
+
+.btn-ghost:hover {
+    color: var(--text-primary);
 }
 
 /* Status Col */
@@ -439,10 +554,13 @@ a {
     justify-content: flex-end;
 }
 
+/* ========================================
+   STATUS INDICATORS (LED Style)
+   ======================================== */
 .status-indicator {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
     font-size: 0.8rem;
     font-weight: 600;
 }
@@ -452,97 +570,127 @@ a {
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.05em;
+    text-shadow: var(--text-emboss);
 }
 
 .status-dot {
-    width: 8px;
-    height: 8px;
+    width: 10px;
+    height: 10px;
     border-radius: 50%;
+    border: 1px solid rgba(0, 0, 0, 0.3);
 }
 
 .status-indicator.running .status-dot {
-    background: #30D158;
-    box-shadow: 0 0 8px rgba(48, 209, 88, 0.6);
+    background: radial-gradient(circle at 35% 35%, #80ff9e, var(--led-green) 60%, #1a8a30);
+    box-shadow: 0 0 6px var(--led-green), 0 0 12px rgba(57, 231, 95, 0.3), inset 0 -1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .status-indicator.running .status-text {
-    color: #30D158;
+    color: var(--led-green);
 }
 
 .status-indicator.stopped .status-dot {
-    background: #FF453A;
+    background: radial-gradient(circle at 35% 35%, #ff8888, var(--led-red) 60%, #8a1a1a);
+    box-shadow: 0 0 6px var(--led-red), 0 0 12px rgba(255, 68, 68, 0.3), inset 0 -1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .status-indicator.stopped .status-text {
-    color: #FF453A;
+    color: var(--led-red);
 }
 
-/* --- Log Box Container (Terminal Style) --- */
+/* ========================================
+   LOG CONTAINER (CRT Terminal)
+   ======================================== */
 .log-container {
-    background: #1e1e1e;
-    /* VS Code dark bg */
-    border-radius: 12px;
-    border: var(--border-glass);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    background: #0a0e12;
+    border-radius: var(--radius-panel);
+    border: 2px solid #1a1e24;
+    box-shadow: var(--shadow-deep-inset), 0 4px 16px rgba(0, 0, 0, 0.4);
     overflow: hidden;
     display: flex;
     flex-direction: column;
     height: 80vh;
-    /* Fixed height for scroll */
+    position: relative;
 }
 
-/* Log Header (Mac Window Title) */
+/* CRT Scanline Overlay */
+.log-container::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(0deg,
+            transparent,
+            transparent 3px,
+            rgba(0, 0, 0, 0.08) 3px,
+            rgba(0, 0, 0, 0.08) 4px);
+    z-index: 1;
+}
+
+/* Log Header (Panel Bezel) */
 .log-header {
-    background: #2d2d2d;
-    padding: 12px 16px;
+    background: linear-gradient(180deg, #2a2e34 0%, #22262c 100%);
+    padding: 10px 16px;
     display: flex;
     align-items: center;
-    border-bottom: 1px solid #333;
+    border-bottom: 1px solid #111;
     gap: 12px;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    position: relative;
+    z-index: 2;
 }
 
+/* Window Dots → Metallic Rivets */
 .window-actions {
     display: flex;
-    gap: 8px;
+    gap: 7px;
 }
 
 .window-dot {
     width: 12px;
     height: 12px;
     border-radius: 50%;
-    opacity: 0.8;
+    border: 1px solid rgba(0, 0, 0, 0.4);
 }
 
 .window-dot.red {
-    background: #ff5f56;
+    background: radial-gradient(circle at 35% 35%, #ff9090, #ff5f56 60%, #a32020);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.3);
 }
 
 .window-dot.yellow {
-    background: #ffbd2e;
+    background: radial-gradient(circle at 35% 35%, #ffe070, #ffbd2e 60%, #a37a10);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.3);
 }
 
 .window-dot.green {
-    background: #27c93f;
+    background: radial-gradient(circle at 35% 35%, #70ff90, #27c93f 60%, #107a20);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.3);
 }
 
 .log-box {
     background: transparent;
-    color: #d4d4d4;
-    font-family: 'JetBrains Mono', 'Menlo', monospace;
+    color: #c0d0c0;
+    font-family: 'JetBrains Mono', 'Menlo', 'Consolas', monospace;
     font-size: 13px;
     padding: 16px;
     width: 100%;
     height: 100%;
     overflow: auto;
     border: none;
-    line-height: 1.5;
+    line-height: 1.6;
+    position: relative;
+    z-index: 2;
 }
 
-/* --- Config Editor (Code Editor Style) --- */
+/* ========================================
+   CONFIG EDITOR (Machined Panel)
+   ======================================== */
 .editor-container {
-    background: #1e1e1e;
-    border-radius: 12px;
-    border: var(--border-glass);
+    background: #0a0e12;
+    border-radius: var(--radius-panel);
+    border: 2px solid #1a1e24;
+    box-shadow: var(--shadow-deep-inset), 0 4px 16px rgba(0, 0, 0, 0.4);
     overflow: hidden;
     height: 80vh;
     display: flex;
@@ -551,8 +699,8 @@ a {
 
 .config-textarea {
     flex: 1;
-    background: #1e1e1e;
-    color: #9cdcfe;
+    background: #0d1117;
+    color: #a8d8a8;
     font-family: 'JetBrains Mono', monospace;
     font-size: 14px;
     padding: 20px;
@@ -561,12 +709,14 @@ a {
     line-height: 1.6;
 }
 
-/* --- Users Table (Mac Finder List) --- */
+/* ========================================
+   USERS TABLE (Recessed Panel)
+   ======================================== */
 .users-container {
-    background: var(--bg-glass);
-    backdrop-filter: blur(20px);
-    border-radius: 12px;
-    border: var(--border-glass);
+    background: var(--metal-light);
+    border-radius: var(--radius-panel);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    box-shadow: var(--shadow-panel);
     overflow: hidden;
 }
 
@@ -580,61 +730,68 @@ a {
     padding: 12px 20px;
     font-size: 0.75rem;
     color: var(--text-tertiary);
-    font-weight: 500;
-    border-bottom: var(--border-glass);
-    background: rgba(0, 0, 0, 0.1);
+    font-weight: 600;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+    background: var(--bg-inset);
+    box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.03);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    text-shadow: var(--text-emboss);
 }
 
 .users-table td {
     padding: 14px 20px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.15);
     color: var(--text-primary);
     font-size: 0.9rem;
 }
 
 .users-table tr:hover {
-    background: rgba(255, 255, 255, 0.04);
+    background: rgba(255, 255, 255, 0.02);
 }
 
 .users-table tr:last-child td {
     border-bottom: none;
 }
 
-/* Status Badges */
+/* Status Badges (Embossed) */
 .status-badge {
-    padding: 4px 10px;
+    padding: 4px 12px;
     border-radius: 6px;
     font-size: 0.75rem;
-    font-weight: 600;
-    background: rgba(255, 255, 255, 0.1);
-    color: var(--text-secondary);
+    font-weight: 700;
     display: inline-block;
+    text-shadow: var(--text-emboss);
+    box-shadow: var(--shadow-btn);
+    border: 1px solid rgba(0, 0, 0, 0.2);
 }
 
 .status-badge.online {
-    background: rgba(48, 209, 88, 0.2);
-    color: #30D158;
+    background: linear-gradient(180deg, #3db85c 0%, #2e9a4a 100%);
+    color: white;
 }
 
 .status-badge.away {
-    background: rgba(255, 159, 10, 0.2);
-    color: #FF9F0A;
+    background: linear-gradient(180deg, #e8a020 0%, #cc8c18 100%);
+    color: white;
 }
 
 .status-badge.offline {
-    background: rgba(255, 69, 58, 0.2);
-    color: #FF453A;
+    background: linear-gradient(180deg, #cc3333 0%, #aa2222 100%);
+    color: white;
 }
 
-/* Animations */
+/* ========================================
+   ANIMATIONS
+   ======================================== */
 .animate-fade-in {
-    animation: fadeIn 0.4s ease-out forwards;
+    animation: fadeIn 0.35s ease-out forwards;
 }
 
 @keyframes fadeIn {
     from {
         opacity: 0;
-        transform: translateY(10px);
+        transform: translateY(8px);
     }
 
     to {
@@ -646,7 +803,7 @@ a {
 @keyframes pulse {
     0% {
         transform: scale(1);
-        opacity: 0.4;
+        opacity: 0.5;
     }
 
     100% {
@@ -655,24 +812,24 @@ a {
     }
 }
 
-/* Alert */
-/* Alert (Floating Toast) */
+/* ========================================
+   ALERT (Raised Toast Panel)
+   ======================================== */
 .alert-custom {
     position: fixed;
     top: 24px;
     right: 24px;
     z-index: 1100;
     min-width: 320px;
-    background: rgba(28, 28, 30, 0.95);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
-    color: white;
+    background: var(--metal-light);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius-panel);
+    color: var(--text-primary);
     padding: 16px;
     display: flex;
     gap: 12px;
     align-items: center;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), var(--shadow-raised);
     animation: slideInRight 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
@@ -688,35 +845,39 @@ a {
     }
 }
 
-/* Custom Toggle Switch (iOS Style) */
+/* ========================================
+   TOGGLE SWITCH (Metallic Physical Toggle)
+   ======================================== */
 .custom-switch {
     display: flex;
     align-items: center;
     padding-left: 0;
-    /* Reset bootstrap padding */
 }
 
 .custom-switch .form-check-input {
     width: 3em;
     height: 1.6em;
     cursor: pointer;
-    background-color: rgba(120, 120, 128, 0.3);
-    border: none;
+    background-color: var(--bg-deep-inset);
+    border: 1px solid rgba(0, 0, 0, 0.4);
     border-radius: 2em;
     margin-left: 0;
     margin-right: 8px;
-    transition: background-color 0.3s;
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='white'/%3e%3c/svg%3e");
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow-deep-inset);
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23888'/%3e%3c/svg%3e");
 }
 
 .custom-switch .form-check-input:checked {
-    background-color: #30D158;
-    border-color: #30D158;
+    background-color: #2e9a4a;
+    border-color: #1a6630;
+    box-shadow: var(--shadow-deep-inset), 0 0 8px rgba(57, 231, 95, 0.3);
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='white'/%3e%3c/svg%3e");
 }
 
 .custom-switch .form-check-input:focus {
-    box-shadow: 0 0 0 4px rgba(48, 209, 88, 0.25);
-    border-color: #30D158;
+    box-shadow: var(--shadow-deep-inset), 0 0 0 3px rgba(58, 155, 220, 0.3);
+    border-color: var(--accent-dark);
 }
 
 .custom-switch .form-check-label {
@@ -725,49 +886,53 @@ a {
     color: var(--text-secondary);
     min-width: 25px;
     letter-spacing: 0.5px;
+    text-shadow: var(--text-emboss);
 }
 
 /* ========================================
-   DARK MODE FORM ELEMENTS
+   FORM ELEMENTS (Inset/Sunken Fields)
    ======================================== */
-
-/* Dark Mode Select/Dropdown */
 select,
 select option {
-    background-color: #1e1e1e !important;
-    color: #e0e0e0 !important;
+    background-color: var(--bg-deep-inset) !important;
+    color: var(--text-primary) !important;
 }
 
 select {
     appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23888' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7078' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right 12px center;
     padding-right: 36px !important;
     cursor: pointer;
+    border-radius: var(--radius-item) !important;
+    box-shadow: var(--shadow-inset);
+    border: 1px solid rgba(0, 0, 0, 0.3) !important;
 }
 
 select:focus {
     border-color: var(--accent) !important;
-    box-shadow: 0 0 0 2px rgba(10, 132, 255, 0.2);
+    box-shadow: var(--shadow-inset), 0 0 0 2px var(--accent-glow);
 }
 
-/* Dark Mode Inputs & Textareas */
 input[type="text"],
 input[type="password"],
 input[type="email"],
 input[type="number"],
 textarea {
-    background-color: rgba(30, 30, 30, 0.8) !important;
-    color: #e0e0e0 !important;
-    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    background-color: var(--bg-deep-inset) !important;
+    color: var(--text-primary) !important;
+    border: 1px solid rgba(0, 0, 0, 0.3) !important;
+    border-radius: var(--radius-item) !important;
+    box-shadow: var(--shadow-inset);
+    transition: all 0.15s ease;
 }
 
 input::placeholder,
 textarea::placeholder {
-    color: rgba(255, 255, 255, 0.3) !important;
+    color: var(--text-tertiary) !important;
 }
 
 input:focus,
@@ -775,51 +940,46 @@ textarea:focus,
 select:focus {
     outline: none;
     border-color: var(--accent) !important;
+    box-shadow: var(--shadow-inset), 0 0 0 2px var(--accent-glow);
 }
 
 /* ========================================
-   CUSTOM SCROLLBAR (Mac-style)
+   SCROLLBAR (Metallic)
    ======================================== */
-
-/* Webkit Scrollbar */
 ::-webkit-scrollbar {
     width: 10px;
     height: 10px;
 }
 
 ::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
+    background: var(--bg-inset);
+    border-radius: 6px;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.15);
-    border-radius: 10px;
-    border: 2px solid transparent;
-    background-clip: padding-box;
+    background: linear-gradient(180deg, #52565e 0%, #44474e 100%);
+    border-radius: 6px;
+    border: 2px solid var(--bg-inset);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.25);
-    border: 2px solid transparent;
-    background-clip: padding-box;
+    background: linear-gradient(180deg, #5c6068 0%, #4e5258 100%);
 }
 
 ::-webkit-scrollbar-corner {
-    background: transparent;
+    background: var(--bg-inset);
 }
 
 /* Firefox Scrollbar */
 * {
     scrollbar-width: thin;
-    scrollbar-color: rgba(255, 255, 255, 0.15) rgba(0, 0, 0, 0.1);
+    scrollbar-color: #44474e var(--bg-inset);
 }
 
 /* ========================================
    DASHBOARD ENHANCEMENTS
    ======================================== */
-
-/* Section Title with Line */
 .section-title {
     font-size: 1.2rem;
     font-weight: 700;
@@ -828,64 +988,70 @@ select:focus {
     display: flex;
     align-items: center;
     gap: 12px;
+    text-shadow: var(--text-emboss);
 }
 
 .section-title::after {
     content: '';
     flex: 1;
-    height: 1px;
-    background: linear-gradient(90deg, rgba(255, 255, 255, 0.1), transparent);
+    height: 2px;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.06), transparent);
+    border-radius: 1px;
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.3);
 }
 
 .section-title i {
     color: var(--accent);
+    text-shadow: 0 0 8px var(--accent-glow);
 }
 
 /* Enhanced Stat Cards */
 .stat-card.highlight {
-    background: linear-gradient(135deg, rgba(10, 132, 255, 0.15), rgba(94, 92, 230, 0.1));
-    border: 1px solid rgba(10, 132, 255, 0.3);
+    background: var(--metal-light);
+    border: 1px solid rgba(58, 155, 220, 0.2);
+    box-shadow: var(--shadow-panel), 0 0 12px rgba(58, 155, 220, 0.1);
 }
 
 .stat-card .stat-icon {
     width: 48px;
     height: 48px;
-    border-radius: 12px;
+    border-radius: 10px;
     display: grid;
     place-items: center;
-    font-size: 1.5rem;
+    font-size: 1.4rem;
     margin-bottom: 12px;
+    box-shadow: var(--shadow-btn);
+    border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .stat-card .stat-icon.cpu {
-    background: rgba(10, 132, 255, 0.2);
-    color: #0A84FF;
+    background: linear-gradient(180deg, #4aaaf0 0%, #3090d0 100%);
+    color: white;
 }
 
 .stat-card .stat-icon.memory {
-    background: rgba(255, 159, 10, 0.2);
-    color: #FF9F0A;
+    background: linear-gradient(180deg, #ffcc50 0%, #e8a020 100%);
+    color: white;
 }
 
 .stat-card .stat-icon.disk {
-    background: rgba(255, 69, 58, 0.2);
-    color: #FF453A;
+    background: linear-gradient(180deg, #ff6666 0%, #dd3333 100%);
+    color: white;
 }
 
-/* Service Card Hover Glow */
+/* Service Card Hover */
 .service-card.row-layout:hover {
-    background: rgba(50, 50, 50, 0.5);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    box-shadow: var(--shadow-panel), 0 4px 20px rgba(0, 0, 0, 0.2);
 }
 
 /* Modal Overlay */
 #serviceModal {
-    backdrop-filter: blur(8px);
+    background: rgba(0, 0, 0, 0.75) !important;
 }
 
-/* Fancy Button Hover */
+/* Button Active States */
 .btn-pill:active {
-    transform: scale(0.97);
+    transform: translateY(1px) scale(0.98);
 }
 
 button[type="submit"] {
@@ -901,31 +1067,24 @@ button[type="submit"] {
 }
 
 /* ========================================
-   LOGS PAGE LAYOUT
-   ======================================== */
-/* ========================================
-   LOGS PAGE LAYOUT - IDE STYLE
+   LOGS PAGE LAYOUT (IDE - CRT Style)
    ======================================== */
 .logs-layout {
     display: grid;
     grid-template-columns: 260px 1fr;
-    /* Slightly narrower sidebar */
     gap: 0;
-    /* No gap, connected panels */
     height: calc(100vh - 100px);
-    /* Maximize height */
     overflow: hidden;
-    border: 1px solid #333;
-    border-radius: 6px;
-    background: #1e1e1e;
-    /* VS Code Sidebar Bg */
+    border: 2px solid #1a1e24;
+    border-radius: var(--radius-panel);
+    background: #0a0e12;
+    box-shadow: var(--shadow-deep-inset), 0 6px 24px rgba(0, 0, 0, 0.4);
 }
 
-/* Sidebar (Explorer) */
+/* Sidebar (File Explorer Panel) */
 .logs-sidebar {
-    background: #252526;
-    /* VS Code Sidebar */
-    border-right: 1px solid #333;
+    background: linear-gradient(180deg, #1e2228 0%, #1a1e24 100%);
+    border-right: 1px solid #111;
     border-radius: 0;
     display: flex;
     flex-direction: column;
@@ -934,57 +1093,42 @@ button[type="submit"] {
 
 .logs-sidebar-header {
     padding: 10px 16px;
-    font-size: 0.75rem;
+    height: 38px;
+    font-size: 0.7rem;
     font-weight: 700;
-    letter-spacing: 0.5px;
+    letter-spacing: 1px;
     text-transform: uppercase;
-    color: #bbb;
-    border-bottom: 1px solid #333;
-    background: #252526;
+    color: var(--text-tertiary);
+    border-bottom: 1px solid #111;
+    background: linear-gradient(180deg, #242830 0%, #1e2228 100%);
     display: flex;
     align-items: center;
     justify-content: space-between;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+    text-shadow: var(--text-emboss);
 }
 
 .logs-sidebar-content {
     flex: 1;
     overflow-y: auto;
     padding: 0;
-    /* Remove padding for edge-to-edge list */
 }
 
 .logs-main {
-    background: #1e1e1e;
-    /* VS Code Editor Bg */
+    background: #0a0e12;
     display: flex;
     flex-direction: column;
     overflow: hidden;
     position: relative;
 }
 
-/* Sidebar Header (App Directory) */
-.logs-sidebar-header {
-    padding: 10px 16px;
-    height: 35px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-size: 0.7rem;
-    font-weight: 700;
-    color: #bbb;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    border-bottom: none;
-}
-
-/* File Items (Tree View) */
+/* Tree Items */
 .tree-item {
     display: flex;
     align-items: center;
-    padding: 3px 0px 3px 8px;
-    /* Compact vertically */
+    padding: 4px 0px 4px 8px;
     cursor: pointer;
-    color: #cccccc;
+    color: var(--text-secondary);
     font-size: 0.85rem;
     border: 1px solid transparent;
     border-left: 2px solid transparent;
@@ -992,24 +1136,24 @@ button[type="submit"] {
     overflow: hidden;
     text-overflow: ellipsis;
     user-select: none;
+    transition: all 0.1s ease;
 }
 
 .tree-item:hover {
-    background: #2a2d2e;
-    color: #ffffff;
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--text-primary);
 }
 
 .tree-item.active {
-    background: #37373d;
-    border-left-color: #007acc;
-    /* VS Code Blue */
-    color: #ffffff;
+    background: rgba(58, 155, 220, 0.1);
+    border-left-color: var(--accent);
+    color: var(--text-primary);
+    box-shadow: inset 3px 0 0 var(--accent);
 }
 
 /* Tree Toggle (Chevron) */
 .tree-toggle {
     margin-right: 4px;
-    /* Tighter spacing */
     transition: transform 0.1s ease;
     display: inline-flex;
     align-items: center;
@@ -1017,7 +1161,7 @@ button[type="submit"] {
     width: 16px;
     height: 16px;
     font-size: 0.75rem;
-    color: #c5c5c5;
+    color: var(--text-tertiary);
 }
 
 .tree-toggle.expanded {
@@ -1028,16 +1172,13 @@ button[type="submit"] {
 .tree-children {
     display: none;
     padding-left: 10px;
-    /* Tighter indentation */
-    border-left: 1px solid rgba(255, 255, 255, 0.08);
-    /* Faint guide line */
+    border-left: 1px solid rgba(255, 255, 255, 0.04);
     margin-left: 8px;
-    /* Align with chevron center */
 }
 
-/* Enhanced Log Viewer (Terminal) */
-.log-container {
-    background: #1e1e1e;
+/* Override log-container inside logs layout */
+.logs-main .log-container {
+    background: #0a0e12;
     border: none;
     box-shadow: none;
     border-radius: 0;
@@ -1046,25 +1187,104 @@ button[type="submit"] {
     height: 100%;
 }
 
-.log-header {
-    background: #1e1e1e;
-    border-bottom: 1px solid #333;
+.logs-main .log-header {
+    background: linear-gradient(180deg, #1a1e24 0%, #141820 100%);
+    border-bottom: 1px solid #111;
     padding: 8px 16px;
     height: 40px;
-    /* Fixed tabular height */
 }
 
-.log-box {
+.logs-main .log-box {
     padding: 0;
-    /* Remove padding to let gutter stick to side if we had one */
 }
 
 .log-box pre {
-    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-family: 'JetBrains Mono', 'Consolas', 'Courier New', monospace;
     font-size: 0.9rem;
     line-height: 1.5;
-    color: #d4d4d4;
-    /* VS Code Default Text */
+    color: #c0d0c0;
     padding: 16px;
     margin: 0;
+}
+
+/* ========================================
+   ACCORDION (Raised Panel Headers)
+   ======================================== */
+.accordion-button {
+    background: var(--metal-btn) !important;
+    color: var(--text-primary) !important;
+    border: none !important;
+    box-shadow: var(--shadow-btn);
+    text-shadow: var(--text-emboss);
+    font-weight: 600;
+    transition: all 0.15s ease;
+}
+
+.accordion-button:not(.collapsed) {
+    background: var(--metal-btn-pressed) !important;
+    box-shadow: var(--shadow-btn-pressed);
+}
+
+.accordion-button::after {
+    filter: invert(0.7);
+}
+
+.accordion-button:focus {
+    box-shadow: var(--shadow-btn), 0 0 0 2px var(--accent-glow) !important;
+}
+
+.accordion-item {
+    background: var(--bg-panel) !important;
+    border: 1px solid rgba(0, 0, 0, 0.3) !important;
+    border-radius: var(--radius-panel) !important;
+    overflow: hidden;
+    box-shadow: var(--shadow-panel);
+}
+
+.accordion-body {
+    background: var(--bg-inset);
+    border-top: 1px solid rgba(0, 0, 0, 0.3);
+}
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+@media (max-width: 992px) {
+    .app-container {
+        grid-template-columns: 1fr;
+    }
+
+    .sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: var(--sidebar-w);
+        z-index: 100;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+    }
+}
+
+/* ========================================
+   SMALL ICON BUTTON (Explorer refresh)
+   ======================================== */
+.btn-icon-small {
+    width: 24px;
+    height: 24px;
+    display: grid;
+    place-items: center;
+    background: none;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    color: var(--text-tertiary);
+    transition: all 0.12s ease;
+}
+
+.btn-icon-small:hover {
+    background: var(--metal-btn);
+    color: var(--text-primary);
+    box-shadow: var(--shadow-btn);
 }

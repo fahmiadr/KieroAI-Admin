@@ -77,12 +77,11 @@
 {% if data.services %}
 <div class="accordion custom-accordion" id="dashboardAccordion">
     {% for group, services in data.services|groupby('group') %}
-    <div class="accordion-item mb-3"
-        style="background: rgba(30, 30, 30, 0.4); border: 1px solid rgba(255, 255, 255, 0.1);">
+    <div class="accordion-item mb-3">
         <h2 class="accordion-header" id="heading{{ loop.index }}">
             <button class="accordion-button {{ 'collapsed' if not loop.first }}" type="button" data-bs-toggle="collapse"
                 data-bs-target="#collapse{{ loop.index }}" aria-expanded="{{ 'true' if loop.first else 'false' }}"
-                aria-controls="collapse{{ loop.index }}" style="background: rgba(255, 255, 255, 0.05); color: #fff;">
+                aria-controls="collapse{{ loop.index }}">
                 <i class="bi {{ 'bi-hdd-network' if group == 'Infrastructure' else 'bi-app-indicator' }} me-2"></i> {{
                 group }}
                 <span class="badge bg-primary rounded-pill ms-2" style="font-size: 0.7rem;">{{ services|length }}</span>

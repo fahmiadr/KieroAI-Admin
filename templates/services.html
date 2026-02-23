@@ -22,14 +22,12 @@
             {% if dev_services %}
             <div class="accordion custom-accordion" id="devServicesAccordion">
                 {% for group, services in dev_services|groupby('group') %}
-                <div class="accordion-item mb-2"
-                    style="background: rgba(30, 30, 30, 0.4); border: 1px solid rgba(255, 255, 255, 0.1);">
+                <div class="accordion-item mb-2">
                     <h2 class="accordion-header" id="headingDev{{ loop.index }}">
                         <button class="accordion-button {{ 'collapsed' if not loop.first }}" type="button"
                             data-bs-toggle="collapse" data-bs-target="#collapseDev{{ loop.index }}"
                             aria-expanded="{{ 'true' if loop.first else 'false' }}"
-                            aria-controls="collapseDev{{ loop.index }}"
-                            style="background: rgba(255, 255, 255, 0.05); color: #fff; padding: 10px 15px; font-size: 0.9rem;">
+                            aria-controls="collapseDev{{ loop.index }}" style="padding: 10px 15px; font-size: 0.9rem;">
                             <i class="bi bi-folder2-open me-2"></i> {{ group }}
                             <span class="badge bg-secondary rounded-pill ms-2" style="font-size: 0.65rem;">{{
                                 services|length }}</span>
@@ -66,7 +64,7 @@
             </div>
             {% else %}
             <div
-                style="padding: 32px; text-align: center; color: var(--text-tertiary); background: var(--bg-glass); border-radius: 12px; border: var(--border-glass);">
+                style="padding: 32px; text-align: center; color: var(--text-tertiary); background: var(--bg-panel); border-radius: 12px; border: 1px solid rgba(0,0,0,0.3); box-shadow: var(--shadow-inset);">
                 <i class="bi bi-inbox" style="font-size: 2rem; margin-bottom: 8px; display: block;"></i>
                 No services configured
             </div>
@@ -92,14 +90,12 @@
             {% if prod_services %}
             <div class="accordion custom-accordion" id="prodServicesAccordion">
                 {% for group, services in prod_services|groupby('group') %}
-                <div class="accordion-item mb-2"
-                    style="background: rgba(30, 30, 30, 0.4); border: 1px solid rgba(255, 255, 255, 0.1);">
+                <div class="accordion-item mb-2">
                     <h2 class="accordion-header" id="headingProd{{ loop.index }}">
                         <button class="accordion-button {{ 'collapsed' if not loop.first }}" type="button"
                             data-bs-toggle="collapse" data-bs-target="#collapseProd{{ loop.index }}"
                             aria-expanded="{{ 'true' if loop.first else 'false' }}"
-                            aria-controls="collapseProd{{ loop.index }}"
-                            style="background: rgba(255, 255, 255, 0.05); color: #fff; padding: 10px 15px; font-size: 0.9rem;">
+                            aria-controls="collapseProd{{ loop.index }}" style="padding: 10px 15px; font-size: 0.9rem;">
                             <i class="bi bi-folder2-open me-2"></i> {{ group }}
                             <span class="badge bg-secondary rounded-pill ms-2" style="font-size: 0.65rem;">{{
                                 services|length }}</span>
@@ -137,7 +133,7 @@
             </div>
             {% else %}
             <div
-                style="padding: 32px; text-align: center; color: var(--text-tertiary); background: var(--bg-glass); border-radius: 12px; border: var(--border-glass);">
+                style="padding: 32px; text-align: center; color: var(--text-tertiary); background: var(--bg-panel); border-radius: 12px; border: 1px solid rgba(0,0,0,0.3); box-shadow: var(--shadow-inset);">
                 <i class="bi bi-inbox" style="font-size: 2rem; margin-bottom: 8px; display: block;"></i>
                 No services configured
             </div>
@@ -150,9 +146,9 @@
 <div id="serviceModal"
     style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 1000; align-items: center; justify-content: center;">
     <div
-        style="background: #1e1e1e; border-radius: 16px; border: var(--border-glass); width: 600px; max-height: 90vh; overflow-y: auto;">
+        style="background: var(--bg-panel); border-radius: 16px; border: 1px solid rgba(0,0,0,0.3); width: 600px; max-height: 90vh; overflow-y: auto; box-shadow: 0 16px 48px rgba(0,0,0,0.5), var(--shadow-raised);">
         <div
-            style="padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center;">
+            style="padding: 20px; border-bottom: 1px solid rgba(0,0,0,0.3); display: flex; justify-content: space-between; align-items: center;">
             <h4 id="modalTitle" style="margin: 0;">Add New Service</h4>
             <button onclick="closeModal()"
                 style="background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer;">&times;</button>

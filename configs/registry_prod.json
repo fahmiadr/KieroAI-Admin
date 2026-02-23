@@ -14,7 +14,7 @@
             "log_file": "logs/backend/current.log",
             "config_file": "C:/laragon/www/kawalo-web-admin/backend/.env",
             "web_directory": "C:/laragon/www/kawalo-web-admin/backend",
-            "status": "Running"
+            "status": "Stopped"
         },
         {
             "id": "kawalo_frontend",
@@ -29,7 +29,7 @@
             "log_file": "logs/frontend/current.log",
             "config_file": "C:/laragon/www/kawalo-web-admin/frontend/.env",
             "web_directory": "C:/laragon/www/kawalo-web-admin/frontend",
-            "status": "Running"
+            "status": "Stopped"
         },
         {
             "id": "mysql_db",

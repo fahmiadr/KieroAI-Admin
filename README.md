@@ -1,7 +1,7 @@
 # KIERO OPS Center
 
 > **Dashboard monitoring & manajemen service** untuk lingkungan development dan production.  
-> Dibangun dengan Flask, dilengkapi AI Log Analyzer berbasis Google Gemini.
+> Dibangun dengan Flask.
 
 ---
 
@@ -36,12 +36,6 @@
 │                   │             │    └───────────────────────────┘   │
 │                   │             │                                     │
 │                   │             │    ┌───────────────────────────┐   │
-│                   │             │───▶│  AI Helper                │   │
-│                   │             │    │  ai_helper.py             │   │
-│                   │             │    │  (Google Gemini API)      │   │
-│                   │             │    └───────────────────────────┘   │
-│                   │             │                                     │
-│                   │             │    ┌───────────────────────────┐   │
 │                   │             │───▶│  System (psutil)          │   │
 │                   └─────────────┘    │  CPU / Memory / Disk      │   │
 │                                      │  Process Management       │   │
@@ -56,7 +50,7 @@
 ```
 kieroOPS/
 ├── app.py                 # Aplikasi utama Flask (semua route)
-├── ai_helper.py           # Modul AI log analyzer (Google Gemini)
+
 ├── config_app.json        # Konfigurasi aplikasi (admin, theme, dll)
 ├── .env                   # Environment variables
 │
@@ -92,7 +86,7 @@ kieroOPS/
 | `SECRET_KEY` | Secret key untuk session Flask | `kunci_rahasia_123` |
 | `KAWALO_BACKEND_PATH` | Path ke backend project | `C:/laragon/www/kawalo-web-admin/backend` |
 | `KAWALO_FRONTEND_PATH` | Path ke frontend project | `C:/laragon/www/kawalo-web-admin/frontend` |
-| `GEMINI_API_KEY` | API Key Google Gemini untuk AI Analyzer | `AIzaSy...` |
+
 
 ### 2. App Config (`config_app.json`)
 
@@ -149,7 +143,7 @@ Setiap service didaftarkan dengan struktur berikut:
 | `id` | Identifier unik service |
 | `name` | Nama tampilan service |
 | `type` | Tipe service (`node`, `python`, `laragon`, `docker`, `dummy`) |
-| `category` | Kategori (`backend` / `frontend`) — digunakan AI Analyzer |
+| `category` | Kategori (`backend` / `frontend`) |
 | `group` | Pengelompokan di UI (e.g., "Kawalo Core", "Infrastructure") |
 | `icon` | Bootstrap Icons class untuk ikon dashboard |
 | `url` | URL akses service |
@@ -246,7 +240,7 @@ GET /logs/<service_id>
         │  │  │ 📁 Log Dir   │  │ [content area]      │   │
         │  │  │ 📁 Web Dir   │  │                     │   │
         │  │  │  📄 file.log │  │ ────────────────── │   │
-        │  │  │  📄 app.js   │  │ AI Analyze Button   │   │
+        │  │  │  📄 app.js   │  │                     │   │
         │  │  └──────────────┘  └───────────────────┘   │
         │  └────────────────────────────────────────────┘
         │
@@ -265,29 +259,7 @@ GET /logs/<service_id>
 
 ---
 
-### Alur AI Log Analyzer
 
-```
-POST /analyze_log/<service_id>
-  │
-  ├── Cek session (harus logged_in)
-  ├── Load service dari registry
-  ├── Baca 60 baris terakhir dari log_file
-  │
-  ├── Kirim ke Google Gemini API (gemini-2.0-flash)
-  │     │
-  │     │  Prompt:
-  │     │  "Bertindaklah sebagai Senior DevOps/Backend Engineer.
-  │     │   Analisa log error berikut dari layanan '<service_name>'.
-  │     │   Berikan: Ringkasan Masalah, Analisa Akar Masalah, Solusi."
-  │     │
-  │     ▼
-  │   Response: HTML formatted analysis
-  │
-  └── Return JSON { "result": "<html analysis>" }
-        │
-        └── Ditampilkan di panel AI Analysis pada logs.html
-```
 
 ---
 
@@ -411,7 +383,7 @@ GET /switch-env/<env_type>
 | **Service Control** | Start/Stop service via shell command dari UI |
 | **Service Manager** | CRUD service di registry dev & prod melalui modal form |
 | **Log Viewer** | Interface IDE-like dengan file explorer dan syntax highlighting |
-| **AI Log Analyzer** | Analisis otomatis log error menggunakan Google Gemini API |
+
 | **Config Editor** | Edit file konfigurasi service (`.env`, `.json`) langsung dari browser |
 | **Environment Switch** | Toggle antara development dan production |
 | **Settings** | Edit admin credentials, app config, dan registry via JSON editor |
@@ -451,7 +423,7 @@ GET /switch-env/<env_type>
 | `GET` | `/logs/<id>/file?path=...` | Baca isi file log | ✅ |
 | `GET` | `/logs/<id>/web-directories` | List file di web directory | ✅ |
 | `GET` | `/logs/<id>/web-file?path=...` | Baca isi file web | ✅ |
-| `POST` | `/analyze_log/<id>` | AI analisis log | ✅ |
+
 
 ---
 
@@ -460,7 +432,7 @@ GET /switch-env/<env_type>
 ### Prasyarat
 
 - Python 3.7+
-- pip packages: `flask`, `python-dotenv`, `psutil`, `google-generativeai`
+- pip packages: `flask`, `python-dotenv`, `psutil`
 
 ### Instalasi
 
@@ -469,7 +441,7 @@ GET /switch-env/<env_type>
 cd kieroOPS
 
 # 2. Install dependencies
-pip install flask python-dotenv psutil google-generativeai
+pip install flask python-dotenv psutil
 
 # 3. Konfigurasi .env
 # Edit .env sesuai kebutuhan (API key, path, dll)
@@ -500,6 +472,6 @@ Aplikasi akan berjalan di `http://localhost:5006` (atau port sesuai `APP_PORT`).
 | **UI Framework** | Bootstrap 5 + Bootstrap Icons |
 | **Styling** | Custom CSS (glassmorphism dark theme) |
 | **System Monitor** | psutil |
-| **AI Engine** | Google Gemini API (`gemini-2.0-flash`) |
+
 | **Data Storage** | JSON files (no database) |
 | **Process Control** | subprocess + psutil |

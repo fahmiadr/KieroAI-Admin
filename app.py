@@ -6,7 +6,7 @@ import psutil
 from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 from dotenv import load_dotenv
 
-from ai_helper import analyze_log_content
+
 
 # 1. Load Environment
 load_dotenv()
@@ -419,41 +419,7 @@ def get_web_file_content(service_id):
         return jsonify({"error": str(e)}), 500
 
 
-@app.route('/analyze_log/<service_id>', methods=['POST'])
-def analyze_log(service_id):
-    """AI-powered log analysis using Google Gemini."""
-    # 1. Security Check
-    if 'logged_in' not in session:
-        return jsonify({"error": "Unauthorized"}), 401
 
-    # 2. Load Service Data
-    registry = load_registry()
-    service = next((s for s in registry['services'] if s['id'] == service_id), None)
-    
-    if not service:
-        return jsonify({"error": "Service tidak ditemukan"}), 404
-
-    # 3. Read Log File
-    if not os.path.exists(service['log_file']):
-        return jsonify({"error": f"File log tidak ditemukan di: {service['log_file']}"}), 404
-
-    try:
-        with open(service['log_file'], 'r', encoding='utf-8', errors='ignore') as f:
-            lines = f.readlines()
-            # Get last 60 lines for AI context
-            log_snippet = "".join(lines[-60:])
-        
-        if not log_snippet.strip():
-            return jsonify({"result": "<div style='color: #30D158; padding: 16px; text-align: center;'>✅ File log kosong, tidak ada error yang terdeteksi.</div>"})
-
-        # 4. Call AI (pass service category: frontend/backend)
-        category = service.get('category', 'backend')
-        result = analyze_log_content(log_snippet, service['name'], category)
-        
-        return jsonify({"result": result})
-
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
 
 @app.route('/config/<service_id>', methods=['GET', 'POST'])
 def edit_config(service_id):
