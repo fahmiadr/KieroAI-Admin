@@ -5,7 +5,7 @@ import subprocess
 import psutil
 from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 from dotenv import load_dotenv
-from db_helper import get_active_users
+
 from ai_helper import analyze_log_content
 
 # 1. Load Environment
@@ -475,41 +475,7 @@ def edit_config(service_id):
             
     return render_template('editor.html', service=service, content=content, env=get_current_env())
 
-@app.route('/users')
-def monitor_users():
-    raw_users = get_active_users()
-    users = []
-    
-    online_count = 0
-    away_count = 0
-    
-    for u in raw_users:
-        # DB Keys: UserName, Email, UserDuty, OnlineStatus, LastActivity, Role
-        is_online = u.get('OnlineStatus') == 'Online'
-        
-        if is_online:
-            online_count += 1
-        if u.get('OnlineStatus') == 'Away':
-            away_count += 1
-            
-        users.append({
-            'username': u.get('UserName', 'Unknown'),
-            'full_name': u.get('UserName', 'Unknown'), # Fallback as full_name not in query
-            'email': u.get('Email', '-'),
-            'role': u.get('Role', 'member'),
-            'status': u.get('OnlineStatus', 'Offline').lower(),
-            'duty_status': u.get('UserDuty', 'OFF DUTY'),
-            'last_activity': u.get('LastActivity'), # Use raw DT object or string
-            'is_online': is_online
-        })
-    
-    total_users = len(users)
-    return render_template('users.html', 
-                         users=users, 
-                         online_count=online_count,
-                         away_count=away_count,
-                         total_users=total_users,
-                         env=get_current_env())
+
 
 @app.route('/settings', methods=['GET', 'POST'])
 def settings():

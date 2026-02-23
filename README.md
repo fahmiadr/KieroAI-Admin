@@ -1,122 +1,505 @@
-# Kawalo Ops Center - User Manual
+# KIERO OPS Center
 
-Welcome to **Kawalo Ops Center**, a premium operations dashboard designed for managing Kawalo services, monitoring system health, and tracking user activity in real-time. This application features a modern **MacOS-style Glassmorphism UI** for a professional and intuitive experience.
+> **Dashboard monitoring & manajemen service** untuk lingkungan development dan production.  
+> Dibangun dengan Flask, dilengkapi AI Log Analyzer berbasis Google Gemini.
 
-## 🚀 How to Start
+---
 
-### Prerequisites
-*   Python 3.8+
-*   MySQL Database (Running)
-*   Node.js (Optional, for frontend/backend services if running locally)
+## Daftar Isi
 
-### Installation
-1.  **Clone the repository:**
-    ```bash
-    git clone https://github.com/your-repo/kawalo-ops.git
-    cd kawalo-ops
-    ```
+- [Arsitektur Sistem](#arsitektur-sistem)
+- [Struktur Direktori](#struktur-direktori)
+- [Konfigurasi](#konfigurasi)
+- [Alur Kerja Aplikasi](#alur-kerja-aplikasi)
+- [Fitur Utama](#fitur-utama)
+- [API Routes](#api-routes)
+- [Cara Menjalankan](#cara-menjalankan)
+- [Tech Stack](#tech-stack)
 
-2.  **Install Dependencies:**
-    ```bash
-    pip install -r requirements.txt
-    ```
+---
 
-3.  **Environment Setup:**
-    *   Copy `.env.example` to `.env` (if available) or ensure your `.env` file has the correct DB credentials:
-        ```env
-        DB_HOST=localhost
-        DB_USER=root
-        DB_PASS=
-        DB_NAME=kawalo_db
-        APP_PORT=5006
-        ```
+## Arsitektur Sistem
 
-### Running the Application
-Run the main Flask application:
+```
+┌──────────────────────────────────────────────────────────────────────┐
+│                          KIERO OPS CENTER                           │
+│                                                                      │
+│  ┌──────────┐    ┌─────────────┐    ┌───────────────────────────┐   │
+│  │  Browser  │───▶│  Flask App  │───▶│  Service Registry (JSON)  │   │
+│  │  (UI)     │◀───│   app.py    │    │  registry_dev.json        │   │
+│  └──────────┘    │             │    │  registry_prod.json       │   │
+│                   │             │    └───────────────────────────┘   │
+│                   │             │                                     │
+│                   │             │    ┌───────────────────────────┐   │
+│                   │             │───▶│  App Config (JSON)        │   │
+│                   │             │    │  config_app.json          │   │
+│                   │             │    └───────────────────────────┘   │
+│                   │             │                                     │
+│                   │             │    ┌───────────────────────────┐   │
+│                   │             │───▶│  AI Helper                │   │
+│                   │             │    │  ai_helper.py             │   │
+│                   │             │    │  (Google Gemini API)      │   │
+│                   │             │    └───────────────────────────┘   │
+│                   │             │                                     │
+│                   │             │    ┌───────────────────────────┐   │
+│                   │             │───▶│  System (psutil)          │   │
+│                   └─────────────┘    │  CPU / Memory / Disk      │   │
+│                                      │  Process Management       │   │
+│                                      └───────────────────────────┘   │
+└──────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Struktur Direktori
+
+```
+kieroOPS/
+├── app.py                 # Aplikasi utama Flask (semua route)
+├── ai_helper.py           # Modul AI log analyzer (Google Gemini)
+├── config_app.json        # Konfigurasi aplikasi (admin, theme, dll)
+├── .env                   # Environment variables
+│
+├── configs/
+│   ├── registry_dev.json  # Daftar service untuk development
+│   └── registry_prod.json # Daftar service untuk production
+│
+├── static/
+│   └── style.css          # Stylesheet utama (dark theme, glassmorphism)
+│
+├── templates/
+│   ├── layout.html        # Base template (sidebar, topbar)
+│   ├── login.html         # Halaman login
+│   ├── dashboard.html     # Dashboard utama (stats + service cards)
+│   ├── services.html      # Service Manager (CRUD service)
+│   ├── settings.html      # Pengaturan (env, admin, registry editor)
+│   ├── logs.html          # Log Viewer (IDE-like interface)
+│   └── editor.html        # Config file editor
+│
+└── logs/                  # Direktori log (auto-generated)
+```
+
+---
+
+## Konfigurasi
+
+### 1. Environment Variables (`.env`)
+
+| Variable | Deskripsi | Contoh |
+|----------|-----------|--------|
+| `APP_ENV` | Environment aktif (`development` / `production`) | `development` |
+| `APP_PORT` | Port Flask server | `5006` |
+| `SECRET_KEY` | Secret key untuk session Flask | `kunci_rahasia_123` |
+| `KAWALO_BACKEND_PATH` | Path ke backend project | `C:/laragon/www/kawalo-web-admin/backend` |
+| `KAWALO_FRONTEND_PATH` | Path ke frontend project | `C:/laragon/www/kawalo-web-admin/frontend` |
+| `GEMINI_API_KEY` | API Key Google Gemini untuk AI Analyzer | `AIzaSy...` |
+
+### 2. App Config (`config_app.json`)
+
+File ini menyimpan konfigurasi yang bisa diubah lewat UI Settings:
+
+```json
+{
+    "admin_username": "admin",
+    "admin_password": "password_aman_ops",
+    "dashboard_title": "KIERO Ops Center",
+    "theme_mode": "dark",
+    "refresh_rate_seconds": 10,
+    "enable_notifications": true,
+    "max_log_lines": 100,
+    "maintenance_mode": false
+}
+```
+
+| Field | Deskripsi |
+|-------|-----------|
+| `admin_username` | Username untuk login |
+| `admin_password` | Password untuk login (plain text) |
+| `dashboard_title` | Judul yang tampil di dashboard |
+| `theme_mode` | Mode tema (`dark`) |
+| `refresh_rate_seconds` | Interval refresh data |
+| `max_log_lines` | Jumlah baris log yang ditampilkan |
+| `maintenance_mode` | Flag mode maintenance |
+
+### 3. Service Registry (`configs/registry_*.json`)
+
+Setiap service didaftarkan dengan struktur berikut:
+
+```json
+{
+    "id": "kawalo_backend",
+    "name": "Kawalo Backend API",
+    "type": "node",
+    "category": "backend",
+    "group": "Kawalo Core",
+    "icon": "bi-server",
+    "url": "http://localhost:3000",
+    "command_start": "cd C:/path/to/backend && npm start",
+    "command_stop": "taskkill /F /IM node.exe",
+    "check_keyword": "node",
+    "log_file": "C:/path/to/logs/backend.log",
+    "config_file": "C:/path/to/backend/.env",
+    "web_directory": "C:/path/to/backend",
+    "status": "Stopped"
+}
+```
+
+| Field | Deskripsi |
+|-------|-----------|
+| `id` | Identifier unik service |
+| `name` | Nama tampilan service |
+| `type` | Tipe service (`node`, `python`, `laragon`, `docker`, `dummy`) |
+| `category` | Kategori (`backend` / `frontend`) — digunakan AI Analyzer |
+| `group` | Pengelompokan di UI (e.g., "Kawalo Core", "Infrastructure") |
+| `icon` | Bootstrap Icons class untuk ikon dashboard |
+| `url` | URL akses service |
+| `command_start` | Perintah shell untuk menjalankan service |
+| `command_stop` | Perintah shell untuk menghentikan service |
+| `check_keyword` | Keyword untuk cek status proses via `psutil` |
+| `log_file` | Path ke file log utama service |
+| `config_file` | Path ke file konfigurasi service (e.g., `.env`) |
+| `web_directory` | Path ke direktori root project |
+| `status` | Status terakhir (`Running` / `Stopped`) |
+
+---
+
+## Alur Kerja Aplikasi
+
+### Alur Autentikasi
+
+```
+┌─────────┐     GET /login      ┌──────────┐
+│  User   │────────────────────▶│  Login   │
+│         │                     │  Page    │
+│         │  POST /login        │          │
+│         │  username + password│          │
+│         │────────────────────▶│          │
+│         │                     └────┬─────┘
+│         │                          │
+│         │              ┌───────────▼───────────┐
+│         │              │  Cek config_app.json  │
+│         │              │  admin_username ==?    │
+│         │              │  admin_password ==?    │
+│         │              └───────────┬───────────┘
+│         │                    ┌─────┴─────┐
+│         │                  Valid?      Invalid?
+│         │                    │            │
+│         │          session['logged_in']   │
+│         │◀───── redirect / ──┘    flash('error')
+│         │                         │
+│         │◀── render login.html ───┘
+└─────────┘
+```
+
+**Middleware (`require_login`):** Setiap request (kecuali `/login` dan `/static`) dicek apakah `session['logged_in']` ada. Jika tidak, user di-redirect ke halaman login.
+
+---
+
+### Alur Dashboard
+
+```
+GET /
+  │
+  ├── load_registry()          ← Baca registry_dev.json atau registry_prod.json
+  │     │                        (tergantung current_env)
+  │     ▼
+  ├── get_system_stats()       ← psutil: CPU%, Memory, Disk usage
+  │     │
+  │     ▼
+  └── render dashboard.html    ← Tampilkan stats + daftar service cards
+        │
+        │  Setiap service card menampilkan:
+        │  ✦ Nama + ikon + tipe
+        │  ✦ Status (Running/Stopped)
+        │  ✦ Tombol: Start | Stop | Logs | Config | Open URL
+        │
+        ▼
+      [User klik Start/Stop]
+        │
+        GET /action/<service_id>/start  atau  /action/<service_id>/stop
+        │
+        ├── Ambil command_start atau command_stop dari registry
+        ├── Jalankan via subprocess.Popen(command, shell=True)
+        ├── Update status di registry JSON
+        ├── Simpan ke file
+        └── Redirect kembali ke dashboard
+```
+
+---
+
+### Alur Log Viewer
+
+```
+GET /logs/<service_id>
+  │
+  ├── Load service dari registry
+  ├── Baca 50 baris terakhir dari log_file
+  ├── Hitung web_directory (fallback: config_file dir → command_start)
+  └── Render logs.html
+        │
+        │  ┌────────────────────────────────────────────┐
+        │  │              LOG VIEWER (IDE-like)           │
+        │  │                                              │
+        │  │  ┌──────────────┐  ┌───────────────────┐   │
+        │  │  │ File Explorer │  │ Log Content Viewer │   │
+        │  │  │              │  │                     │   │
+        │  │  │ 📁 Log Dir   │  │ [content area]      │   │
+        │  │  │ 📁 Web Dir   │  │                     │   │
+        │  │  │  📄 file.log │  │ ────────────────── │   │
+        │  │  │  📄 app.js   │  │ AI Analyze Button   │   │
+        │  │  └──────────────┘  └───────────────────┘   │
+        │  └────────────────────────────────────────────┘
+        │
+        │  File Explorer memuat data via AJAX:
+        │
+        ├── GET /logs/<id>/directories     ← Daftar file di log directory
+        ├── GET /logs/<id>/web-directories  ← Daftar file di web directory
+        ├── GET /logs/<id>/file             ← Isi file log (dalam log dir)
+        └── GET /logs/<id>/web-file         ← Isi file web (source code)
+```
+
+**Keamanan File Access:**
+- File hanya bisa diakses jika berada di dalam `log_dir` atau `web_dir` dari service
+- Path dinormalisasi lalu dipastikan `abs_file_path.startswith(abs_allowed_dir)`
+- Hidden files (`.`) dan `node_modules` disembunyikan dari file explorer
+
+---
+
+### Alur AI Log Analyzer
+
+```
+POST /analyze_log/<service_id>
+  │
+  ├── Cek session (harus logged_in)
+  ├── Load service dari registry
+  ├── Baca 60 baris terakhir dari log_file
+  │
+  ├── Kirim ke Google Gemini API (gemini-2.0-flash)
+  │     │
+  │     │  Prompt:
+  │     │  "Bertindaklah sebagai Senior DevOps/Backend Engineer.
+  │     │   Analisa log error berikut dari layanan '<service_name>'.
+  │     │   Berikan: Ringkasan Masalah, Analisa Akar Masalah, Solusi."
+  │     │
+  │     ▼
+  │   Response: HTML formatted analysis
+  │
+  └── Return JSON { "result": "<html analysis>" }
+        │
+        └── Ditampilkan di panel AI Analysis pada logs.html
+```
+
+---
+
+### Alur Service Manager
+
+```
+GET /services
+  │
+  ├── Load registry_dev.json → dev_services
+  ├── Load registry_prod.json → prod_services
+  └── Render services.html
+        │
+        │  Tampilkan 2 kolom:
+        │  ┌─────────────────┐  ┌──────────────────┐
+        │  │  Development     │  │  Production       │
+        │  │  + Add Service   │  │  + Add Service    │
+        │  │                  │  │                   │
+        │  │  [service cards] │  │  [service cards]  │
+        │  │  Edit | Delete   │  │  Edit | Delete    │
+        │  └─────────────────┘  └──────────────────┘
+        │
+        │  [Klik Add/Edit] → Modal Form
+        │
+        POST /services/save
+        │
+        ├── Baca form data (id, name, type, commands, paths, dll)
+        ├── Jika original_id ada → Update service lama
+        │   Jika tidak → Append service baru
+        ├── Simpan ke registry JSON yang sesuai
+        └── Redirect ke /services
+        │
+        GET /services/delete/<env>/<service_id>
+        │
+        ├── Filter service dari array
+        ├── Simpan registry tanpa service tersebut
+        └── Redirect ke /services
+```
+
+---
+
+### Alur Settings
+
+```
+GET /settings
+  │
+  ├── Load config_app.json → tampilkan di JSON editor
+  ├── Load registry_dev.json → tampilkan di textarea
+  ├── Load registry_prod.json → tampilkan di textarea
+  └── Render settings.html
+        │
+        │  ┌───────────────────────────────────────┐
+        │  │  Settings Page                         │
+        │  │                                        │
+        │  │  🔀 Environment Switcher               │
+        │  │     [Development] [Production]         │
+        │  │                                        │
+        │  │  ⚙️  Global Config (JSON Editor)       │
+        │  │     { admin_username, password, ... }  │
+        │  │     [Save Config]                      │
+        │  │                                        │
+        │  │  📝 Dev Registry (JSON Editor)         │
+        │  │     [Save Dev Registry]                │
+        │  │                                        │
+        │  │  📝 Prod Registry (JSON Editor)        │
+        │  │     [Save Prod Registry]               │
+        │  └───────────────────────────────────────┘
+        │
+        POST /settings          ← Save config_app.json
+        POST /settings/save-registry/dev   ← Save registry_dev.json
+        POST /settings/save-registry/prod  ← Save registry_prod.json
+```
+
+---
+
+### Alur Config Editor
+
+```
+GET /config/<service_id>
+  │
+  ├── Load service dari registry
+  ├── Baca isi config_file (misal: .env)
+  └── Render editor.html
+        │
+        │  ┌───────────────────────────┐
+        │  │  Config Editor             │
+        │  │  📄 kawalo_backend.json    │
+        │  │                            │
+        │  │  [textarea with content]   │
+        │  │                            │
+        │  │  [Save] [Cancel]           │
+        │  └───────────────────────────┘
+        │
+        POST /config/<service_id>
+        │
+        ├── Tulis content baru ke config_file
+        └── Redirect ke dashboard
+```
+
+---
+
+### Alur Environment Switching
+
+```
+GET /switch-env/<env_type>
+  │
+  ├── Validasi env_type ("development" / "production")
+  ├── Set global current_env
+  └── Redirect ke dashboard
+        │
+        │  Setelah switch, semua halaman menggunakan
+        │  registry yang sesuai (dev/prod)
+```
+
+---
+
+## Fitur Utama
+
+| Fitur | Deskripsi |
+|-------|-----------|
+| **Dashboard** | Monitoring CPU, Memory, Disk secara real-time + daftar service cards |
+| **Service Control** | Start/Stop service via shell command dari UI |
+| **Service Manager** | CRUD service di registry dev & prod melalui modal form |
+| **Log Viewer** | Interface IDE-like dengan file explorer dan syntax highlighting |
+| **AI Log Analyzer** | Analisis otomatis log error menggunakan Google Gemini API |
+| **Config Editor** | Edit file konfigurasi service (`.env`, `.json`) langsung dari browser |
+| **Environment Switch** | Toggle antara development dan production |
+| **Settings** | Edit admin credentials, app config, dan registry via JSON editor |
+| **Static Auth** | Login statis dengan credentials dari `config_app.json` (editable via UI) |
+
+---
+
+## API Routes
+
+### Pages (HTML)
+
+| Method | Route | Fungsi | Auth |
+|--------|-------|--------|------|
+| `GET/POST` | `/login` | Halaman login | ❌ |
+| `GET` | `/logout` | Logout & clear session | ❌ |
+| `GET` | `/` | Dashboard utama | ✅ |
+| `GET` | `/services` | Service Manager | ✅ |
+| `GET/POST` | `/settings` | Halaman pengaturan | ✅ |
+| `GET/POST` | `/config/<service_id>` | Editor konfigurasi | ✅ |
+| `GET` | `/logs/<service_id>` | Log viewer | ✅ |
+
+### Actions (Redirect)
+
+| Method | Route | Fungsi | Auth |
+|--------|-------|--------|------|
+| `GET` | `/action/<service_id>/<action>` | Start/Stop service | ✅ |
+| `GET` | `/switch-env/<env_type>` | Switch dev/prod | ✅ |
+| `POST` | `/services/save` | Simpan/tambah service | ✅ |
+| `GET` | `/services/delete/<env>/<id>` | Hapus service | ✅ |
+| `POST` | `/settings/save-registry/<type>` | Simpan registry JSON | ✅ |
+
+### API (JSON)
+
+| Method | Route | Fungsi | Auth |
+|--------|-------|--------|------|
+| `GET` | `/logs/<id>/directories` | List file di log directory | ✅ |
+| `GET` | `/logs/<id>/file?path=...` | Baca isi file log | ✅ |
+| `GET` | `/logs/<id>/web-directories` | List file di web directory | ✅ |
+| `GET` | `/logs/<id>/web-file?path=...` | Baca isi file web | ✅ |
+| `POST` | `/analyze_log/<id>` | AI analisis log | ✅ |
+
+---
+
+## Cara Menjalankan
+
+### Prasyarat
+
+- Python 3.7+
+- pip packages: `flask`, `python-dotenv`, `psutil`, `google-generativeai`
+
+### Instalasi
+
 ```bash
+# 1. Clone / masuk ke direktori
+cd kieroOPS
+
+# 2. Install dependencies
+pip install flask python-dotenv psutil google-generativeai
+
+# 3. Konfigurasi .env
+# Edit .env sesuai kebutuhan (API key, path, dll)
+
+# 4. Jalankan
 python app.py
 ```
-*The server will start at `http://0.0.0.0:5006`*
+
+Aplikasi akan berjalan di `http://localhost:5006` (atau port sesuai `APP_PORT`).
+
+### Login Default
+
+| Field | Value |
+|-------|-------|
+| Username | `admin` |
+| Password | `password_aman_ops` |
+
+> Credentials bisa diubah di halaman **Settings** → Global Config, atau langsung edit `config_app.json`.
 
 ---
 
-### Accessing the Dashboard
-*   **URL:** `http://localhost:5006` (Default)
-*   **Login Credentials:**
-    *   **Username:** `admin`
-    *   **Password:** `password_aman_ops`
-    *   *(Credentials are stored in `config_app.json`)*
+## Tech Stack
 
----
-
-## 🖥️ Dashboard Overview
-
-The **Service Dashboard** is your central command center.
-
-*   **System Stats:** Top widgets show real-time CPU, Memory, and Disk usage.
-*   **Service List:** A row-based list of all registered services (e.g., Backend, Frontend, Database).
-    *   **Status Indicators:** Green pulse (Running) or Red (Stopped).
-    *   **Action Buttons:**
-        *   `▶ Start`: Start the service.
-        *   `⏹ Stop`: Stop the service.
-        *   `Logs`: Open the live terminal log viewer.
-        *   `Config`: Open the configuration editor.
-
----
-
-## 🛠️ Managing Services
-
-### Viewing Logs (Terminal Mode)
-Clicking the **Logs** button opens a dedicated "Terminal Window".
-*   **Auto-Scroll:** Automatically shows the last 50 lines of logs.
-*   **Refresh:** Click the refresh icon in the window header to update log data.
-*   **Interface:** Designed to look like a native macOS Terminal for better readability.
-
-### Editing Configuration
-Clicking the **Config** button opens the **Configuration Editor**.
-*   **Syntax Highlighting:** Edit `.json` or `.env` configurations in a clean editor environment.
-*   **Save:** Click "Save" to apply changes immediately to the file system.
-*   **Safety:** Always backup your config before making drastic changes.
-
----
-
-## 👥 User Monitor
-
-Navigate to the **User Monitor** tab via the sidebar.
-
-*   **Real-time Activity:** View which users are currently **Online**, **Away**, or **Offline**.
-*   **Duty Status:** Track who is currently "On Duty" or "Off Duty".
-*   **Finder-Style List:** A clean, searchable table layout showing:
-    *   User Avatar & Name
-    *   Email & Role
-    *   Last Activity Timestamp
-    *   Live Status Badge
-
----
-
-## ⚙️ System Settings
-
-Navigate to the **Settings** tab to manage the application environment.
-
-### Environment Switcher
-You can toggle the entire dashboard between **Development** and **Production** modes.
-*   **Development:** Loads configuration from `configs/registry_dev.json`.
-*   **Production:** Loads configuration from `configs/registry_prod.json`.
-*   **How to Switch:** Click the "Dev" or "Prod" toggle in the Settings card. The UI will update instantly.
-
-### Administrator Info
-View the currently logged-in super admin details.
-
----
-
-## 🎨 UI & Aesthetics
-*   **Void Dark Theme:** Deep, rich background colors optimized for long-term usage.
-*   **Glassmorphism:** Frosted glass effects on panels and windows.
-*   **Interactive:** Hover effects, smooth transitions, and pulsing status indicators.
-
----
-
-## 🆘 Troubleshooting
-*   **Service Not Starting?** Check the Logs viewer for error messages.
-*   **Config Not Saving?** Ensure the backend process has write permissions to the `configs/` folder.
-*   **User List Empty?** Ensure the database connection in `.env` is correct and the `tkuser` table is populated.
+| Layer | Teknologi |
+|-------|-----------|
+| **Backend** | Python 3 + Flask |
+| **Frontend** | HTML5 + CSS3 + Vanilla JavaScript |
+| **UI Framework** | Bootstrap 5 + Bootstrap Icons |
+| **Styling** | Custom CSS (glassmorphism dark theme) |
+| **System Monitor** | psutil |
+| **AI Engine** | Google Gemini API (`gemini-2.0-flash`) |
+| **Data Storage** | JSON files (no database) |
+| **Process Control** | subprocess + psutil |

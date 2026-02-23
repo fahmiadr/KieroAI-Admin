@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% block page_title %}Configuration Editor{% endblock %}
-{% block breadcrumb %}{{ service_id }} Config{% endblock %}
+{% block breadcrumb %}{{ service.id }} Config{% endblock %}
 
 {% block content %}
 <div class="editor-container">
@@ -12,7 +12,7 @@
         </div>
         <div
             style="font-family: -apple-system; font-size: 0.8rem; color: #ccc; margin-left: 12px; display: flex; align-items: center; gap: 6px;">
-            <i class="bi bi-file-earmark-code"></i> {{ service_id }}.json
+            <i class="bi bi-file-earmark-code"></i> {{ service.id }}.json
         </div>
         <div style="margin-left: auto; display: flex; gap: 8px;">
             <button type="submit" form="configForm" class="btn-pill"

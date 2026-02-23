@@ -143,216 +143,213 @@
             </div>
             {% endif %}
         </div>
+    </div>
+</div>
 
-        <!-- Add/Edit Service Modal -->
-        <div id="serviceModal"
-            style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 1000; display: none; align-items: center; justify-content: center;">
-            <div
-                style="background: #1e1e1e; border-radius: 16px; border: var(--border-glass); width: 600px; max-height: 90vh; overflow-y: auto;">
-                <div
-                    style="padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center;">
-                    <h4 id="modalTitle" style="margin: 0;">Add New Service</h4>
-                    <button onclick="closeModal()"
-                        style="background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer;">&times;</button>
-                </div>
-                <form id="serviceForm" method="POST" action="{{ url_for('save_service') }}" style="padding: 24px;">
-                    <input type="hidden" name="env_target" id="envTarget">
-                    <input type="hidden" name="original_id" id="originalId">
-
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
-                        <div>
-                            <label
-                                style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">Service
-                                ID *</label>
-                            <input type="text" name="id" id="svcId" required placeholder="e.g. kawalo_backend"
-                                style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: var(--border-glass); border-radius: 8px; color: white;">
-                        </div>
-                        <div>
-                            <label
-                                style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">Service
-                                Name *</label>
-                            <input type="text" name="name" id="svcName" required placeholder="e.g. Kawalo Backend API"
-                                style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: var(--border-glass); border-radius: 8px; color: white; margin-bottom: 8px;">
-                        </div>
-                    </div>
-
-                    <div style="margin-bottom: 16px;">
-                        <label
-                            style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">Group</label>
-                        <input type="text" name="group" id="svcGroup" list="groupList" placeholder="e.g. Kawalo Core"
-                            style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: var(--border-glass); border-radius: 8px; color: white;">
-                        <datalist id="groupList">
-                            <option value="Kawalo Core">
-                            <option value="Infrastructure">
-                            <option value="Development">
-                            <option value="External">
-                        </datalist>
-                    </div>
-
-                    <div style="margin-bottom: 16px;">
-                        <label
-                            style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">Service
-                            URL</label>
-                        <input type="text" name="url" id="svcUrl" placeholder="e.g. http://localhost:3000"
-                            style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: var(--border-glass); border-radius: 8px; color: white;">
-                    </div>
-
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
-                        <div>
-                            <label
-                                style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">Type</label>
-                            <select name="type" id="svcType"
-                                style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: var(--border-glass); border-radius: 8px; color: white;">
-                                <option value="node">Node.js</option>
-                                <option value="python">Python</option>
-                                <option value="laragon">Laragon/MySQL</option>
-                                <option value="docker">Docker</option>
-                                <option value="dummy">Dummy/Test</option>
-                            </select>
-                        </div>
-                        <div>
-                            <div>
-                                <label
-                                    style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">Dashboard
-                                    Icon</label>
-                                <div style="display: flex; gap: 8px; align-items: center;">
-                                    <select name="icon" id="svcIcon" onchange="previewIcon(this.value)"
-                                        style="flex: 1; padding: 10px 12px; background: rgba(255,255,255,0.05); border: var(--border-glass); border-radius: 8px; color: white;">
-                                        <option value="bi-window">Window (App)</option>
-                                        <option value="bi-server">Server</option>
-                                        <option value="bi-database">Database</option>
-                                        <option value="bi-globe">Globe (Web)</option>
-                                        <option value="bi-code-slash">Code</option>
-                                        <option value="bi-terminal">Terminal</option>
-                                        <option value="bi-boxes">Boxes (Container)</option>
-                                        <option value="bi-hdd-network">Network</option>
-                                        <option value="bi-cloud">Cloud</option>
-                                        <option value="bi-gear">Gear</option>
-                                        <option value="bi-cpu">CPU</option>
-                                        <option value="bi-lightning">Lightning</option>
-                                    </select>
-                                    <div id="iconPreview"
-                                        style="width: 40px; height: 40px; background: rgba(10, 132, 255, 0.2); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #0A84FF; font-size: 1.2rem;">
-                                        <i class="bi bi-window"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div style="margin-bottom: 16px;">
-                            <label
-                                style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">Start
-                                Command *</label>
-                            <textarea name="command_start" id="svcStart" required rows="2" placeholder="e.g. npm start"
-                                style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: var(--border-glass); border-radius: 8px; color: white; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem;"></textarea>
-                        </div>
-
-                        <div style="margin-bottom: 16px;">
-                            <label
-                                style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">Stop
-                                Command *</label>
-                            <textarea name="command_stop" id="svcStop" required rows="2"
-                                placeholder="e.g. taskkill /F /IM node.exe"
-                                style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: var(--border-glass); border-radius: 8px; color: white; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem;"></textarea>
-                        </div>
-
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
-                            <div>
-                                <label
-                                    style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">Check
-                                    Keyword</label>
-                                <input type="text" name="check_keyword" id="svcKeyword" placeholder="e.g. node"
-                                    style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: var(--border-glass); border-radius: 8px; color: white;">
-                            </div>
-                            <div>
-                                <label
-                                    style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">Log
-                                    File Path</label>
-                                <input type="text" name="log_file" id="svcLog"
-                                    placeholder="e.g. logs/backend/current.log"
-                                    style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: var(--border-glass); border-radius: 8px; color: white;">
-                            </div>
-                        </div>
-
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
-                            <div>
-                                <label
-                                    style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">Config
-                                    File Path</label>
-                                <input type="text" name="config_file" id="svcConfig" placeholder="e.g. C:/path/to/.env"
-                                    style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: var(--border-glass); border-radius: 8px; color: white;">
-                            </div>
-                            <div>
-                                <label
-                                    style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">Web
-                                    Directory</label>
-                                <input type="text" name="web_directory" id="svcWebDir"
-                                    placeholder="e.g. C:/path/to/web-app"
-                                    style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: var(--border-glass); border-radius: 8px; color: white;">
-                            </div>
-                        </div>
-
-                        <div style="display: flex; justify-content: flex-end; gap: 12px;">
-                            <button type="button" onclick="closeModal()" class="btn-pill">Cancel</button>
-                            <button type="submit" class="btn-pill"
-                                style="background: rgba(10, 132, 255, 0.2); color: #0A84FF;">
-                                <i class="bi bi-save me-2"></i> Save Service
-                            </button>
-                        </div>
-                </form>
-            </div>
+<!-- Add/Edit Service Modal -->
+<div id="serviceModal"
+    style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 1000; align-items: center; justify-content: center;">
+    <div
+        style="background: #1e1e1e; border-radius: 16px; border: var(--border-glass); width: 600px; max-height: 90vh; overflow-y: auto;">
+        <div
+            style="padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center;">
+            <h4 id="modalTitle" style="margin: 0;">Add New Service</h4>
+            <button onclick="closeModal()"
+                style="background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer;">&times;</button>
         </div>
+        <form id="serviceForm" method="POST" action="{{ url_for('save_service') }}" style="padding: 24px;">
+            <input type="hidden" name="env_target" id="envTarget">
+            <input type="hidden" name="original_id" id="originalId">
 
-        <script>
-            // Store services data for editing
-            const devServices = {{ dev_services_json| safe }};
-            const prodServices = {{ prod_services_json| safe }};
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+                <div>
+                    <label
+                        style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">Service
+                        ID *</label>
+                    <input type="text" name="id" id="svcId" required placeholder="e.g. kawalo_backend"
+                        style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: var(--border-glass); border-radius: 8px; color: white;">
+                </div>
+                <div>
+                    <label
+                        style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">Service
+                        Name *</label>
+                    <input type="text" name="name" id="svcName" required placeholder="e.g. Kawalo Backend API"
+                        style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: var(--border-glass); border-radius: 8px; color: white; margin-bottom: 8px;">
+                </div>
+            </div>
 
-            function showAddForm(env) {
-                document.getElementById('modalTitle').textContent = 'Add New Service (' + env.charAt(0).toUpperCase() + env.slice(1) + ')';
-                document.getElementById('envTarget').value = env;
-                document.getElementById('originalId').value = '';
-                document.getElementById('serviceForm').reset();
-                document.getElementById('serviceModal').style.display = 'flex';
-            }
+            <div style="margin-bottom: 16px;">
+                <label
+                    style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">Group</label>
+                <input type="text" name="group" id="svcGroup" list="groupList" placeholder="e.g. Kawalo Core"
+                    style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: var(--border-glass); border-radius: 8px; color: white;">
+                <datalist id="groupList">
+                    <option value="Kawalo Core">
+                    <option value="Infrastructure">
+                    <option value="Development">
+                    <option value="External">
+                </datalist>
+            </div>
 
-            function editService(env, serviceId) {
-                const services = env === 'development' ? devServices : prodServices;
-                const svc = services.find(s => s.id === serviceId);
-                if (!svc) return;
+            <div style="margin-bottom: 16px;">
+                <label
+                    style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">Service
+                    URL</label>
+                <input type="text" name="url" id="svcUrl" placeholder="e.g. http://localhost:3000"
+                    style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: var(--border-glass); border-radius: 8px; color: white;">
+            </div>
 
-                document.getElementById('modalTitle').textContent = 'Edit Service (' + env.charAt(0).toUpperCase() + env.slice(1) + ')';
-                document.getElementById('envTarget').value = env;
-                document.getElementById('originalId').value = serviceId;
-                document.getElementById('svcId').value = svc.id || '';
-                document.getElementById('svcName').value = svc.name || '';
-                document.getElementById('svcGroup').value = svc.group || 'Other';
-                document.getElementById('svcUrl').value = svc.url || '';
-                document.getElementById('svcType').value = svc.type || 'node';
-                document.getElementById('svcIcon').value = svc.icon || 'bi-window';
-                previewIcon(svc.icon || 'bi-window');
-                document.getElementById('svcStart').value = svc.command_start || '';
-                document.getElementById('svcStop').value = svc.command_stop || '';
-                document.getElementById('svcKeyword').value = svc.check_keyword || '';
-                document.getElementById('svcLog').value = svc.log_file || '';
-                document.getElementById('svcConfig').value = svc.config_file || '';
-                document.getElementById('svcWebDir').value = svc.web_directory || '';
-                document.getElementById('serviceModal').style.display = 'flex';
-            }
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+                <div>
+                    <label
+                        style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">Type</label>
+                    <select name="type" id="svcType"
+                        style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: var(--border-glass); border-radius: 8px; color: white;">
+                        <option value="node">Node.js</option>
+                        <option value="python">Python</option>
+                        <option value="laragon">Laragon/MySQL</option>
+                        <option value="docker">Docker</option>
+                        <option value="dummy">Dummy/Test</option>
+                    </select>
+                </div>
+                <div>
+                    <div>
+                        <label
+                            style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">Dashboard
+                            Icon</label>
+                        <div style="display: flex; gap: 8px; align-items: center;">
+                            <select name="icon" id="svcIcon" onchange="previewIcon(this.value)"
+                                style="flex: 1; padding: 10px 12px; background: rgba(255,255,255,0.05); border: var(--border-glass); border-radius: 8px; color: white;">
+                                <option value="bi-window">Window (App)</option>
+                                <option value="bi-server">Server</option>
+                                <option value="bi-database">Database</option>
+                                <option value="bi-globe">Globe (Web)</option>
+                                <option value="bi-code-slash">Code</option>
+                                <option value="bi-terminal">Terminal</option>
+                                <option value="bi-boxes">Boxes (Container)</option>
+                                <option value="bi-hdd-network">Network</option>
+                                <option value="bi-cloud">Cloud</option>
+                                <option value="bi-gear">Gear</option>
+                                <option value="bi-cpu">CPU</option>
+                                <option value="bi-lightning">Lightning</option>
+                            </select>
+                            <div id="iconPreview"
+                                style="width: 40px; height: 40px; background: rgba(10, 132, 255, 0.2); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #0A84FF; font-size: 1.2rem;">
+                                <i class="bi bi-window"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-            function previewIcon(iconClass) {
-                document.getElementById('iconPreview').innerHTML = '<i class="bi ' + iconClass + '"></i>';
-            }
+            <div style="margin-bottom: 16px;">
+                <label
+                    style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">Start
+                    Command *</label>
+                <textarea name="command_start" id="svcStart" required rows="2" placeholder="e.g. npm start"
+                    style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: var(--border-glass); border-radius: 8px; color: white; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem;"></textarea>
+            </div>
 
+            <div style="margin-bottom: 16px;">
+                <label
+                    style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">Stop
+                    Command *</label>
+                <textarea name="command_stop" id="svcStop" required rows="2" placeholder="e.g. taskkill /F /IM node.exe"
+                    style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: var(--border-glass); border-radius: 8px; color: white; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem;"></textarea>
+            </div>
 
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+                <div>
+                    <label
+                        style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">Check
+                        Keyword</label>
+                    <input type="text" name="check_keyword" id="svcKeyword" placeholder="e.g. node"
+                        style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: var(--border-glass); border-radius: 8px; color: white;">
+                </div>
+                <div>
+                    <label
+                        style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">Log
+                        File Path</label>
+                    <input type="text" name="log_file" id="svcLog" placeholder="e.g. logs/backend/current.log"
+                        style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: var(--border-glass); border-radius: 8px; color: white;">
+                </div>
+            </div>
 
-            function closeModal() {
-                document.getElementById('serviceModal').style.display = 'none';
-            }
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+                <div>
+                    <label
+                        style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">Config
+                        File Path</label>
+                    <input type="text" name="config_file" id="svcConfig" placeholder="e.g. C:/path/to/.env"
+                        style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: var(--border-glass); border-radius: 8px; color: white;">
+                </div>
+                <div>
+                    <label
+                        style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">Web
+                        Directory</label>
+                    <input type="text" name="web_directory" id="svcWebDir" placeholder="e.g. C:/path/to/web-app"
+                        style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: var(--border-glass); border-radius: 8px; color: white;">
+                </div>
+            </div>
 
-            // Close modal on escape key
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape') closeModal();
-            });
-        </script>
-        {% endblock %}
+            <div style="display: flex; justify-content: flex-end; gap: 12px;">
+                <button type="button" onclick="closeModal()" class="btn-pill">Cancel</button>
+                <button type="submit" class="btn-pill" style="background: rgba(10, 132, 255, 0.2); color: #0A84FF;">
+                    <i class="bi bi-save me-2"></i> Save Service
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Store services data for editing
+    const devServices = {{ dev_services_json| safe }};
+    const prodServices = {{ prod_services_json| safe }};
+
+    function showAddForm(env) {
+        document.getElementById('modalTitle').textContent = 'Add New Service (' + env.charAt(0).toUpperCase() + env.slice(1) + ')';
+        document.getElementById('envTarget').value = env;
+        document.getElementById('originalId').value = '';
+        document.getElementById('serviceForm').reset();
+        document.getElementById('serviceModal').style.display = 'flex';
+    }
+
+    function editService(env, serviceId) {
+        const services = env === 'development' ? devServices : prodServices;
+        const svc = services.find(s => s.id === serviceId);
+        if (!svc) return;
+
+        document.getElementById('modalTitle').textContent = 'Edit Service (' + env.charAt(0).toUpperCase() + env.slice(1) + ')';
+        document.getElementById('envTarget').value = env;
+        document.getElementById('originalId').value = serviceId;
+        document.getElementById('svcId').value = svc.id || '';
+        document.getElementById('svcName').value = svc.name || '';
+        document.getElementById('svcGroup').value = svc.group || 'Other';
+        document.getElementById('svcUrl').value = svc.url || '';
+        document.getElementById('svcType').value = svc.type || 'node';
+        document.getElementById('svcIcon').value = svc.icon || 'bi-window';
+        previewIcon(svc.icon || 'bi-window');
+        document.getElementById('svcStart').value = svc.command_start || '';
+        document.getElementById('svcStop').value = svc.command_stop || '';
+        document.getElementById('svcKeyword').value = svc.check_keyword || '';
+        document.getElementById('svcLog').value = svc.log_file || '';
+        document.getElementById('svcConfig').value = svc.config_file || '';
+        document.getElementById('svcWebDir').value = svc.web_directory || '';
+        document.getElementById('serviceModal').style.display = 'flex';
+    }
+
+    function previewIcon(iconClass) {
+        document.getElementById('iconPreview').innerHTML = '<i class="bi ' + iconClass + '"></i>';
+    }
+
+    function closeModal() {
+        document.getElementById('serviceModal').style.display = 'none';
+    }
+
+    // Close modal on escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeModal();
+    });
+</script>
+{% endblock %}
