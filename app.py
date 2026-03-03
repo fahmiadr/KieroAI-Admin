@@ -59,6 +59,43 @@ def check_service_status(keyword):
             continue
     return False
 
+def evaluate_service_status(service_config):
+    """
+    Evaluates service status using command_status (systemctl) if available,
+    otherwise falls back to psutil keyword check.
+    """
+    command = service_config.get("command_status", "")
+    
+    if command:
+        try:
+            process = subprocess.Popen(
+                command, shell=True,
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
+            )
+            stdout, _ = process.communicate(timeout=5)
+            status_output = stdout.strip().lower()
+            
+            if status_output == "active":
+                return "Running"
+            elif status_output == "failed":
+                return "Error"
+            elif status_output == "activating":
+                return "Starting"
+            else:
+                return "Stopped"
+        except subprocess.TimeoutExpired:
+            process.kill()
+            print(f"Status check timeout for {service_config.get('id')}. Falling back to keyword check.")
+        except Exception as e:
+            print(f"Command execution failed for {service_config.get('id')}, falling back to keyword check. Error: {e}")
+    
+    # Fallback: legacy psutil keyword check
+    keyword = service_config.get("check_keyword", "")
+    if keyword:
+        return "Running" if check_service_status(keyword) else "Stopped"
+    
+    return "Stopped"
+
 def get_system_stats():
     """Mendapatkan statistik sistem (CPU, Memory, Disk)."""
     return {
@@ -98,11 +135,10 @@ def dashboard():
     registry = load_registry()
     stats = get_system_stats()
     
-    # Cek status service (Manual State Management)
+    # Cek status service realtime
     services = registry.get('services', [])
     for svc in services:
-        # Default to 'Stopped' if status not set
-        svc['status'] = svc.get('status', 'Stopped')
+        svc['status'] = evaluate_service_status(svc)
         
     return render_template('dashboard.html', 
                            data=registry, 
@@ -129,29 +165,6 @@ def service_action(service_id, action_type):
         cmd = service['command_start'] if action_type == 'start' else service['command_stop']
         success, msg = run_cmd(cmd)
         if success:
-            # Update Status in Registry
-            new_status = 'Running' if action_type == 'start' else 'Stopped'
-            service['status'] = new_status
-            
-            # Save Registry
-            file_path = 'configs/registry_prod.json' if get_current_env() == 'production' else 'configs/registry_dev.json'
-            try:
-                # Re-read registry to ensure we don't overwrite concurrent changes (basic check)
-                with open(file_path, 'r') as f:
-                    current_registry = json.load(f)
-                
-                # Update the specific service in the list
-                for s in current_registry.get('services', []):
-                    if s['id'] == service_id:
-                        s['status'] = new_status
-                        break
-                
-                with open(file_path, 'w') as f:
-                    json.dump(current_registry, f, indent=4)
-                    
-            except Exception as e:
-                flash(f"Warning: Command executed but failed to save status: {str(e)}", 'warning')
-
             flash(f"Service {service_id} {action_type}ed successfully.", 'success')
         else:
             flash(f"Error: {msg}", 'error')
@@ -558,6 +571,7 @@ def save_service():
         'url': request.form.get('url', ''),
         'command_start': request.form.get('command_start'),
         'command_stop': request.form.get('command_stop'),
+        'command_status': request.form.get('command_status', ''),
         'check_keyword': request.form.get('check_keyword', ''),
         'log_file': request.form.get('log_file', ''),
         'config_file': request.form.get('config_file', ''),

@@ -254,6 +254,15 @@
                     style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: var(--border-glass); border-radius: 8px; color: white; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem;"></textarea>
             </div>
 
+            <div style="margin-bottom: 16px;">
+                <label
+                    style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">Status
+                    Command (Systemctl Equivalent)</label>
+                <textarea name="command_status" id="svcStatusCmd" rows="2"
+                    placeholder="e.g. systemctl is-active my_service.service (Optional)"
+                    style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: var(--border-glass); border-radius: 8px; color: white; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem;"></textarea>
+            </div>
+
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
                 <div>
                     <label
@@ -328,6 +337,7 @@
         previewIcon(svc.icon || 'bi-window');
         document.getElementById('svcStart').value = svc.command_start || '';
         document.getElementById('svcStop').value = svc.command_stop || '';
+        document.getElementById('svcStatusCmd').value = svc.command_status || '';
         document.getElementById('svcKeyword').value = svc.check_keyword || '';
         document.getElementById('svcLog').value = svc.log_file || '';
         document.getElementById('svcConfig').value = svc.config_file || '';

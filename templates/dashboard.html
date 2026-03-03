@@ -125,7 +125,8 @@
 
                         <!-- Col 3: Status (Right) -->
                         <div class="service-status-col">
-                            <div class="status-indicator {{ 'running' if service.status == 'Running' else 'stopped' }}">
+                            <div
+                                class="status-indicator {{ 'running' if service.status == 'Running' else 'error' if service.status == 'Error' else 'starting' if service.status == 'Starting' else 'unknown' if service.status == 'Unknown' else 'stopped' }}">
                                 <span class="status-dot"></span>
                                 <span class="status-text">{{ service.status }}</span>
                             </div>
