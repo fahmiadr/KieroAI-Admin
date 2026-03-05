@@ -1288,3 +1288,352 @@ button[type="submit"] {
     color: var(--text-primary);
     box-shadow: var(--shadow-btn);
 }
+
+/* ========================================
+   MODAL DIALOG (Raised Metal Panel)
+   ======================================== */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.65);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(3px);
+}
+
+.modal-panel {
+    background: var(--metal-light);
+    border-radius: var(--radius-panel);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.6), var(--shadow-raised);
+    display: flex;
+    flex-direction: column;
+    max-height: 90vh;
+}
+
+.modal-header {
+    padding: 16px 20px;
+    background: var(--metal-dark);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.4);
+    border-radius: var(--radius-panel) var(--radius-panel) 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.modal-header-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.modal-header-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: var(--metal-btn);
+    display: grid;
+    place-items: center;
+    font-size: 1.1rem;
+    box-shadow: var(--shadow-btn);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.modal-header h4 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 700;
+    text-shadow: var(--text-emboss);
+}
+
+.modal-body {
+    overflow-y: auto;
+    flex: 1;
+    padding: 20px;
+}
+
+.modal-footer {
+    padding: 14px 20px;
+    border-top: 1px solid rgba(0, 0, 0, 0.3);
+    background: var(--metal-dark);
+    border-radius: 0 0 var(--radius-panel) var(--radius-panel);
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    flex-shrink: 0;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+.btn-close-modal {
+    background: var(--metal-btn);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    color: var(--text-tertiary);
+    font-size: 1.1rem;
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-btn);
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    box-shadow: var(--shadow-btn);
+    transition: all 0.12s ease;
+}
+
+.btn-close-modal:hover {
+    background: var(--metal-btn-hover);
+    color: var(--text-primary);
+}
+
+/* ========================================
+   FORM ELEMENTS (Machined Inset)
+   ======================================== */
+.form-section {
+    margin-bottom: 20px;
+}
+
+.form-section-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 14px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+}
+
+.form-section-header i {
+    font-size: 0.85rem;
+}
+
+.form-section-header span {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    text-shadow: var(--text-emboss);
+}
+
+.form-section-header .section-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, rgba(255, 255, 255, 0.06), transparent);
+}
+
+.form-row {
+    display: grid;
+    gap: 14px;
+    margin-bottom: 14px;
+}
+
+.form-row.cols-2 {
+    grid-template-columns: 1fr 1fr;
+}
+
+.form-row.cols-auto {
+    grid-template-columns: auto 1fr;
+}
+
+.form-label {
+    display: block;
+    font-size: 0.73rem;
+    font-weight: 600;
+    color: var(--text-tertiary);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    text-shadow: var(--text-emboss);
+}
+
+.form-label .required {
+    color: var(--led-red);
+    font-weight: 700;
+}
+
+.form-label .optional {
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: 0;
+    color: var(--text-tertiary);
+    opacity: 0.7;
+}
+
+.form-input,
+.form-select,
+.form-textarea {
+    width: 100%;
+    padding: 9px 12px;
+    background: var(--bg-deep-inset);
+    border: 1px solid rgba(0, 0, 0, 0.4);
+    border-radius: var(--radius-item);
+    color: var(--text-primary);
+    font-size: 0.85rem;
+    box-shadow: var(--shadow-inset);
+    transition: all 0.15s ease;
+}
+
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+    border-color: var(--accent);
+    box-shadow: var(--shadow-inset), 0 0 0 2px var(--accent-glow);
+}
+
+.form-input::placeholder,
+.form-textarea::placeholder {
+    color: var(--text-tertiary);
+    opacity: 0.5;
+}
+
+.form-textarea {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82rem;
+    resize: vertical;
+    line-height: 1.5;
+}
+
+.form-textarea.cmd-start {
+    color: var(--led-green);
+}
+
+.form-textarea.cmd-stop {
+    color: var(--led-red);
+}
+
+.form-textarea.cmd-status {
+    color: var(--led-blue);
+}
+
+.form-textarea.cmd-query {
+    color: var(--led-green);
+}
+
+.form-input.mono {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82rem;
+    color: var(--led-green);
+}
+
+.form-hint {
+    font-size: 0.68rem;
+    color: var(--text-tertiary);
+    margin-top: 4px;
+    opacity: 0.7;
+}
+
+/* Database Card (Inset Panel) */
+.db-config-card {
+    background: var(--bg-inset);
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    padding: 16px;
+    box-shadow: var(--shadow-inset);
+}
+
+/* Saved Query Row */
+.sq-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+    align-items: start;
+}
+
+/* ========================================
+   DATABASE PANEL (CRT-Style)
+   ======================================== */
+.db-results-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8rem;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.db-results-table thead th {
+    padding: 10px 14px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-tertiary);
+    background: var(--bg-inset);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+    box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.03);
+    position: sticky;
+    top: 0;
+    text-shadow: var(--text-emboss);
+}
+
+.db-results-table tbody td {
+    padding: 8px 14px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+    color: var(--text-primary);
+    max-width: 300px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.db-results-table tbody tr:nth-child(even) {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.db-results-table tbody tr:hover {
+    background: rgba(58, 155, 220, 0.06);
+}
+
+.db-null-value {
+    color: var(--text-tertiary);
+    font-style: italic;
+    opacity: 0.6;
+}
+
+.db-pagination-bar {
+    padding: 10px 20px;
+    border-top: 1px solid rgba(0, 0, 0, 0.3);
+    background: var(--metal-dark);
+    border-radius: 0 0 var(--radius-panel) var(--radius-panel);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.78rem;
+    flex-shrink: 0;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+.db-pagination-bar select {
+    padding: 4px 8px;
+    background: var(--bg-deep-inset);
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    border-radius: 6px;
+    color: var(--text-primary);
+    font-size: 0.78rem;
+    box-shadow: var(--shadow-inset);
+}
+
+.db-toast {
+    position: absolute;
+    top: 70px;
+    right: 20px;
+    padding: 10px 18px;
+    border-radius: var(--radius-item);
+    font-size: 0.78rem;
+    font-weight: 600;
+    z-index: 1010;
+    box-shadow: var(--shadow-raised);
+    transition: opacity 0.3s;
+}
+
+.db-toast.success {
+    background: linear-gradient(180deg, #3db85c 0%, #2e9a4a 100%);
+    color: white;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.db-toast.error {
+    background: linear-gradient(180deg, #cc3333 0%, #aa2222 100%);
+    color: white;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+}

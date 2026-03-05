@@ -1,4 +1,4 @@
-{% extends "layout.html" %}
+﻿{% extends "layout.html" %}
 {% block page_title %}Service Manager{% endblock %}
 {% block breadcrumb %}Services{% endblock %}
 
@@ -143,172 +143,227 @@
 </div>
 
 <!-- Add/Edit Service Modal -->
-<div id="serviceModal"
-    style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 1000; align-items: center; justify-content: center;">
-    <div
-        style="background: var(--bg-panel); border-radius: 16px; border: 1px solid rgba(0,0,0,0.3); width: 600px; max-height: 90vh; overflow-y: auto; box-shadow: 0 16px 48px rgba(0,0,0,0.5), var(--shadow-raised);">
-        <div
-            style="padding: 20px; border-bottom: 1px solid rgba(0,0,0,0.3); display: flex; justify-content: space-between; align-items: center;">
-            <h4 id="modalTitle" style="margin: 0;">Add New Service</h4>
-            <button onclick="closeModal()"
-                style="background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer;">&times;</button>
+<div id="serviceModal" class="modal-overlay">
+    <div class="modal-panel" style="width: 640px;">
+        <!-- Header -->
+        <div class="modal-header">
+            <div class="modal-header-title">
+                <div class="modal-header-icon" style="color: var(--accent);">
+                    <i class="bi bi-plus-lg"></i>
+                </div>
+                <h4 id="modalTitle">Add New Service</h4>
+            </div>
+            <button class="btn-close-modal" onclick="closeModal()">&times;</button>
         </div>
-        <form id="serviceForm" method="POST" action="{{ url_for('save_service') }}" style="padding: 24px;">
-            <input type="hidden" name="env_target" id="envTarget">
-            <input type="hidden" name="original_id" id="originalId">
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
-                <div>
-                    <label
-                        style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">Service
-                        ID *</label>
-                    <input type="text" name="id" id="svcId" required placeholder="e.g. kawalo_backend"
-                        style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: var(--border-glass); border-radius: 8px; color: white;">
-                </div>
-                <div>
-                    <label
-                        style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">Service
-                        Name *</label>
-                    <input type="text" name="name" id="svcName" required placeholder="e.g. Kawalo Backend API"
-                        style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: var(--border-glass); border-radius: 8px; color: white; margin-bottom: 8px;">
-                </div>
-            </div>
+        <!-- Body -->
+        <div class="modal-body">
+            <form id="serviceForm" method="POST" action="{{ url_for('save_service') }}">
+                <input type="hidden" name="env_target" id="envTarget">
+                <input type="hidden" name="original_id" id="originalId">
 
-            <div style="margin-bottom: 16px;">
-                <label
-                    style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">Group</label>
-                <input type="text" name="group" id="svcGroup" list="groupList" placeholder="e.g. Kawalo Core"
-                    style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: var(--border-glass); border-radius: 8px; color: white;">
-                <datalist id="groupList">
-                    <option value="Kawalo Core">
-                    <option value="Infrastructure">
-                    <option value="Development">
-                    <option value="External">
-                </datalist>
-            </div>
-
-            <div style="margin-bottom: 16px;">
-                <label
-                    style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">Service
-                    URL</label>
-                <input type="text" name="url" id="svcUrl" placeholder="e.g. http://localhost:3000"
-                    style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: var(--border-glass); border-radius: 8px; color: white;">
-            </div>
-
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
-                <div>
-                    <label
-                        style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">Type</label>
-                    <select name="type" id="svcType"
-                        style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: var(--border-glass); border-radius: 8px; color: white;">
-                        <option value="node">Node.js</option>
-                        <option value="python">Python</option>
-                        <option value="laragon">Laragon/MySQL</option>
-                        <option value="docker">Docker</option>
-                        <option value="dummy">Dummy/Test</option>
-                    </select>
-                </div>
-                <div>
-                    <div>
-                        <label
-                            style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">Dashboard
-                            Icon</label>
-                        <div style="display: flex; gap: 8px; align-items: center;">
-                            <select name="icon" id="svcIcon" onchange="previewIcon(this.value)"
-                                style="flex: 1; padding: 10px 12px; background: rgba(255,255,255,0.05); border: var(--border-glass); border-radius: 8px; color: white;">
-                                <option value="bi-window">Window (App)</option>
-                                <option value="bi-server">Server</option>
-                                <option value="bi-database">Database</option>
-                                <option value="bi-globe">Globe (Web)</option>
-                                <option value="bi-code-slash">Code</option>
-                                <option value="bi-terminal">Terminal</option>
-                                <option value="bi-boxes">Boxes (Container)</option>
-                                <option value="bi-hdd-network">Network</option>
-                                <option value="bi-cloud">Cloud</option>
-                                <option value="bi-gear">Gear</option>
-                                <option value="bi-cpu">CPU</option>
-                                <option value="bi-lightning">Lightning</option>
+                <!-- Section 1: Identity -->
+                <div class="form-section">
+                    <div class="form-section-header">
+                        <i class="bi bi-tag" style="color: var(--accent);"></i>
+                        <span style="color: var(--accent);">Service Identity</span>
+                        <div class="section-line"></div>
+                    </div>
+                    <div class="form-row cols-2">
+                        <div>
+                            <label class="form-label">Service ID <span class="required">*</span></label>
+                            <input type="text" name="id" id="svcId" required placeholder="e.g. kawalo_backend"
+                                class="form-input">
+                        </div>
+                        <div>
+                            <label class="form-label">Service Name <span class="required">*</span></label>
+                            <input type="text" name="name" id="svcName" required placeholder="e.g. Kawalo Backend API"
+                                class="form-input">
+                        </div>
+                    </div>
+                    <div class="form-row cols-2">
+                        <div>
+                            <label class="form-label">Group</label>
+                            <input type="text" name="group" id="svcGroup" list="groupList"
+                                placeholder="e.g. Kawalo Core" class="form-input">
+                            <datalist id="groupList">
+                                <option value="Kawalo Core">
+                                <option value="Infrastructure">
+                                <option value="Development">
+                                <option value="External">
+                            </datalist>
+                        </div>
+                        <div>
+                            <label class="form-label">Service URL</label>
+                            <input type="text" name="url" id="svcUrl" placeholder="http://localhost:3000"
+                                class="form-input">
+                        </div>
+                    </div>
+                    <div class="form-row cols-2">
+                        <div>
+                            <label class="form-label">Type</label>
+                            <select name="type" id="svcType" class="form-select">
+                                <option value="node">Node.js</option>
+                                <option value="python">Python</option>
+                                <option value="laragon">Laragon/MySQL</option>
+                                <option value="docker">Docker</option>
+                                <option value="dummy">Dummy/Test</option>
                             </select>
-                            <div id="iconPreview"
-                                style="width: 40px; height: 40px; background: rgba(10, 132, 255, 0.2); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #0A84FF; font-size: 1.2rem;">
-                                <i class="bi bi-window"></i>
+                        </div>
+                        <div>
+                            <label class="form-label">Dashboard Icon</label>
+                            <div style="display: flex; gap: 8px; align-items: center;">
+                                <select name="icon" id="svcIcon" onchange="previewIcon(this.value)" class="form-select">
+                                    <option value="bi-window">Window (App)</option>
+                                    <option value="bi-server">Server</option>
+                                    <option value="bi-database">Database</option>
+                                    <option value="bi-globe">Globe (Web)</option>
+                                    <option value="bi-code-slash">Code</option>
+                                    <option value="bi-terminal">Terminal</option>
+                                    <option value="bi-boxes">Boxes (Container)</option>
+                                    <option value="bi-hdd-network">Network</option>
+                                    <option value="bi-cloud">Cloud</option>
+                                    <option value="bi-gear">Gear</option>
+                                    <option value="bi-cpu">CPU</option>
+                                    <option value="bi-lightning">Lightning</option>
+                                </select>
+                                <div id="iconPreview" class="modal-header-icon"
+                                    style="color: var(--accent); flex-shrink: 0;">
+                                    <i class="bi bi-window"></i>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div style="margin-bottom: 16px;">
-                <label
-                    style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">Start
-                    Command *</label>
-                <textarea name="command_start" id="svcStart" required rows="2" placeholder="e.g. npm start"
-                    style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: var(--border-glass); border-radius: 8px; color: white; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem;"></textarea>
-            </div>
-
-            <div style="margin-bottom: 16px;">
-                <label
-                    style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">Stop
-                    Command *</label>
-                <textarea name="command_stop" id="svcStop" required rows="2" placeholder="e.g. taskkill /F /IM node.exe"
-                    style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: var(--border-glass); border-radius: 8px; color: white; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem;"></textarea>
-            </div>
-
-            <div style="margin-bottom: 16px;">
-                <label
-                    style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">Status
-                    Command (Systemctl Equivalent)</label>
-                <textarea name="command_status" id="svcStatusCmd" rows="2"
-                    placeholder="e.g. systemctl is-active my_service.service (Optional)"
-                    style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: var(--border-glass); border-radius: 8px; color: white; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem;"></textarea>
-            </div>
-
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
-                <div>
-                    <label
-                        style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">Check
-                        Keyword</label>
-                    <input type="text" name="check_keyword" id="svcKeyword" placeholder="e.g. node"
-                        style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: var(--border-glass); border-radius: 8px; color: white;">
+                <!-- Section 2: Commands -->
+                <div class="form-section">
+                    <div class="form-section-header">
+                        <i class="bi bi-terminal" style="color: var(--led-orange);"></i>
+                        <span style="color: var(--led-orange);">Commands</span>
+                        <div class="section-line"></div>
+                    </div>
+                    <div class="form-row cols-2">
+                        <div>
+                            <label class="form-label">Start Command <span class="required">*</span></label>
+                            <textarea name="command_start" id="svcStart" required rows="2" placeholder="e.g. npm start"
+                                class="form-textarea cmd-start"></textarea>
+                        </div>
+                        <div>
+                            <label class="form-label">Stop Command <span class="required">*</span></label>
+                            <textarea name="command_stop" id="svcStop" required rows="2"
+                                placeholder="e.g. taskkill /F /IM node.exe" class="form-textarea cmd-stop"></textarea>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="form-label">Status Command <span class="optional">(Optional)</span></label>
+                        <textarea name="command_status" id="svcStatusCmd" rows="1"
+                            placeholder="e.g. systemctl is-active my_service"
+                            class="form-textarea cmd-status"></textarea>
+                    </div>
                 </div>
-                <div>
-                    <label
-                        style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">Log
-                        File Path</label>
-                    <input type="text" name="log_file" id="svcLog" placeholder="e.g. logs/backend/current.log"
-                        style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: var(--border-glass); border-radius: 8px; color: white;">
-                </div>
-            </div>
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
-                <div>
-                    <label
-                        style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">Config
-                        File Path</label>
-                    <input type="text" name="config_file" id="svcConfig" placeholder="e.g. C:/path/to/.env"
-                        style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: var(--border-glass); border-radius: 8px; color: white;">
+                <!-- Section 3: Paths -->
+                <div class="form-section">
+                    <div class="form-section-header">
+                        <i class="bi bi-folder2" style="color: var(--led-blue);"></i>
+                        <span style="color: var(--led-blue);">Paths & Detection</span>
+                        <div class="section-line"></div>
+                    </div>
+                    <div class="form-row cols-2">
+                        <div>
+                            <label class="form-label">Check Keyword</label>
+                            <input type="text" name="check_keyword" id="svcKeyword" placeholder="e.g. node"
+                                class="form-input">
+                        </div>
+                        <div>
+                            <label class="form-label">Log File Path</label>
+                            <input type="text" name="log_file" id="svcLog" placeholder="logs/backend/current.log"
+                                class="form-input">
+                        </div>
+                    </div>
+                    <div class="form-row cols-2">
+                        <div>
+                            <label class="form-label">Config File Path</label>
+                            <input type="text" name="config_file" id="svcConfig" placeholder="C:/path/to/.env"
+                                class="form-input">
+                        </div>
+                        <div>
+                            <label class="form-label">Web Directory</label>
+                            <input type="text" name="web_directory" id="svcWebDir" placeholder="C:/path/to/web-app"
+                                class="form-input">
+                        </div>
+                    </div>
                 </div>
-                <div>
-                    <label
-                        style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">Web
-                        Directory</label>
-                    <input type="text" name="web_directory" id="svcWebDir" placeholder="e.g. C:/path/to/web-app"
-                        style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: var(--border-glass); border-radius: 8px; color: white;">
-                </div>
-            </div>
 
-            <div style="display: flex; justify-content: flex-end; gap: 12px;">
-                <button type="button" onclick="closeModal()" class="btn-pill">Cancel</button>
-                <button type="submit" class="btn-pill" style="background: rgba(10, 132, 255, 0.2); color: #0A84FF;">
-                    <i class="bi bi-save me-2"></i> Save Service
-                </button>
-            </div>
-        </form>
+                <!-- Section 4: Database -->
+                <div class="form-section">
+                    <div class="form-section-header">
+                        <i class="bi bi-database" style="color: var(--led-green);"></i>
+                        <span style="color: var(--led-green);">Database</span>
+                        <div class="section-line"></div>
+                        <label
+                            style="display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 0.73rem; color: var(--text-tertiary);">
+                            <input type="checkbox" id="dbEnabled" onchange="toggleDbFields()"
+                                style="accent-color: var(--led-green);">
+                            Enable
+                        </label>
+                    </div>
+                    <div id="dbFieldsContainer" style="display: none;">
+                        <div class="db-config-card">
+                            <div class="form-row cols-auto" style="grid-template-columns: 140px 1fr;">
+                                <div>
+                                    <label class="form-label">Engine</label>
+                                    <select name="db_engine" id="dbEngine" class="form-select">
+                                        <option value="mysql">MySQL</option>
+                                        <option value="postgresql">PostgreSQL</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="form-label">Connection URL</label>
+                                    <input type="text" name="db_connection_url" id="dbConnUrl"
+                                        placeholder="mysql://user:pass@host:port/database" class="form-input mono">
+                                </div>
+                            </div>
+                            <div style="display: flex; justify-content: flex-end; margin-top: 8px;">
+                                <button type="button" onclick="testDbConnection()" id="btnTestDbForm" class="btn-pill"
+                                    style="font-size: 0.75rem; padding: 4px 12px; color: var(--led-blue);">
+                                    <i class="bi bi-plug"></i> Test Connection
+                                </button>
+                            </div>
+                            <div id="testDbResult"
+                                style="margin-top: 8px; font-size: 0.8rem; display: none; padding: 8px; border-radius: 6px;">
+                            </div>
+                            <div style="margin-top: 12px;">
+                                <div
+                                    style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                                    <label class="form-label" style="margin-bottom: 0;">Saved Queries</label>
+                                    <button type="button" onclick="addSavedQueryRow()" class="btn-pill"
+                                        style="font-size: 0.7rem; padding: 3px 10px;">
+                                        <i class="bi bi-plus"></i> Tambah
+                                    </button>
+                                </div>
+                                <div id="savedQueriesContainer"></div>
+                                <input type="hidden" name="db_saved_queries" id="dbSavedQueriesJson" value="[]">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer Actions -->
+                <div class="modal-footer" style="margin: 0 -20px -20px; border-radius: 0;">
+                    <button type="button" onclick="closeModal()" class="btn-pill">Cancel</button>
+                    <button type="submit" class="btn-pill"
+                        style="color: var(--accent); box-shadow: var(--shadow-btn), 0 0 6px var(--accent-glow);">
+                        <i class="bi bi-save"></i> Save Service
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
 <script>
-    // Store services data for editing
     const devServices = {{ dev_services_json| safe }};
     const prodServices = {{ prod_services_json| safe }};
 
@@ -317,6 +372,10 @@
         document.getElementById('envTarget').value = env;
         document.getElementById('originalId').value = '';
         document.getElementById('serviceForm').reset();
+        document.getElementById('dbEnabled').checked = false;
+        toggleDbFields();
+        document.getElementById('savedQueriesContainer').innerHTML = '';
+        document.getElementById('testDbResult').style.display = 'none';
         document.getElementById('serviceModal').style.display = 'flex';
     }
 
@@ -342,6 +401,23 @@
         document.getElementById('svcLog').value = svc.log_file || '';
         document.getElementById('svcConfig').value = svc.config_file || '';
         document.getElementById('svcWebDir').value = svc.web_directory || '';
+
+        const db = svc.database || null;
+        const dbEnabledEl = document.getElementById('dbEnabled');
+        if (db) {
+            dbEnabledEl.checked = true;
+            toggleDbFields();
+            document.getElementById('dbEngine').value = db.engine || 'mysql';
+            document.getElementById('dbConnUrl').value = db.connection_url || '';
+            const container = document.getElementById('savedQueriesContainer');
+            container.innerHTML = '';
+            (db.saved_queries || []).forEach(q => addSavedQueryRow(q.label, q.query));
+        } else {
+            dbEnabledEl.checked = false;
+            toggleDbFields();
+        }
+
+        document.getElementById('testDbResult').style.display = 'none';
         document.getElementById('serviceModal').style.display = 'flex';
     }
 
@@ -353,9 +429,96 @@
         document.getElementById('serviceModal').style.display = 'none';
     }
 
-    // Close modal on escape key
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') closeModal();
     });
+
+    function toggleDbFields() {
+        const enabled = document.getElementById('dbEnabled').checked;
+        document.getElementById('dbFieldsContainer').style.display = enabled ? 'block' : 'none';
+    }
+
+    function addSavedQueryRow(label = '', query = '') {
+        const container = document.getElementById('savedQueriesContainer');
+        const row = document.createElement('div');
+        row.className = 'sq-row';
+        row.innerHTML = `
+            <input type="text" class="sq-label form-input" value="${label}" placeholder="Label" style="flex: 1; font-size: 0.8rem;">
+            <textarea class="sq-query form-textarea cmd-start" rows="1" placeholder="SELECT * FROM ..." style="flex: 2; font-size: 0.8rem;">${query}</textarea>
+            <button type="button" onclick="this.parentElement.remove()" class="btn-icon danger" style="width: 32px; height: 32px; flex-shrink: 0;">
+                <i class="bi bi-trash"></i>
+            </button>
+        `;
+        container.appendChild(row);
+    }
+
+    function collectSavedQueries() {
+        const queries = [];
+        document.querySelectorAll('#savedQueriesContainer > div').forEach(row => {
+            const label = row.querySelector('.sq-label')?.value.trim();
+            const query = row.querySelector('.sq-query')?.value.trim();
+            if (label && query) queries.push({ label, query });
+        });
+        return queries;
+    }
+
+    document.getElementById('serviceForm').addEventListener('submit', function (e) {
+        if (document.getElementById('dbEnabled').checked) {
+            const queries = collectSavedQueries();
+            document.getElementById('dbSavedQueriesJson').value = JSON.stringify(queries);
+        }
+    });
+
+    function testDbConnection() {
+        const engine = document.getElementById('dbEngine').value;
+        const url = document.getElementById('dbConnUrl').value.trim();
+        const btn = document.getElementById('btnTestDbForm');
+        const resultDiv = document.getElementById('testDbResult');
+
+        if (!url) {
+            resultDiv.style.display = 'block';
+            resultDiv.style.backgroundColor = 'rgba(255, 68, 68, 0.1)';
+            resultDiv.style.color = 'var(--led-red)';
+            resultDiv.style.border = '1px solid rgba(255, 68, 68, 0.3)';
+            resultDiv.innerHTML = '<i class="bi bi-exclamation-triangle"></i> URL cannot be empty';
+            return;
+        }
+
+        btn.disabled = true;
+        btn.innerHTML = '<i class="bi bi-hourglass-split"></i> Testing...';
+        resultDiv.style.display = 'none';
+
+        fetch('/api/database/test_url', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ engine: engine, connection_url: url })
+        })
+            .then(r => r.json())
+            .then(data => {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="bi bi-plug"></i> Test Connection';
+                resultDiv.style.display = 'block';
+                if (data.success) {
+                    resultDiv.style.backgroundColor = 'rgba(57, 231, 95, 0.1)';
+                    resultDiv.style.color = 'var(--led-green)';
+                    resultDiv.style.border = '1px solid rgba(57, 231, 95, 0.3)';
+                    resultDiv.innerHTML = '<i class="bi bi-check-circle"></i> ' + (data.message || 'Connection successful');
+                } else {
+                    resultDiv.style.backgroundColor = 'rgba(255, 68, 68, 0.1)';
+                    resultDiv.style.color = 'var(--led-red)';
+                    resultDiv.style.border = '1px solid rgba(255, 68, 68, 0.3)';
+                    resultDiv.innerHTML = '<i class="bi bi-x-circle"></i> ' + (data.error || 'Connection failed');
+                }
+            })
+            .catch(err => {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="bi bi-plug"></i> Test Connection';
+                resultDiv.style.display = 'block';
+                resultDiv.style.backgroundColor = 'rgba(255, 68, 68, 0.1)';
+                resultDiv.style.color = 'var(--led-red)';
+                resultDiv.style.border = '1px solid rgba(255, 68, 68, 0.3)';
+                resultDiv.innerHTML = '<i class="bi bi-x-circle"></i> Network Error';
+            });
+    }
 </script>
 {% endblock %}

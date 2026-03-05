@@ -28,6 +28,32 @@
             "log_file": "logs/mendawai/log_file",
             "config_file": "path/log/env.",
             "web_directory": ""
+        },
+        {
+            "id": "kawalo_db",
+            "name": "MySQL Database (kawalo_db)",
+            "type": "node",
+            "icon": "bi-window",
+            "group": "Kawalo Core",
+            "url": "",
+            "command_start": "net start mysql",
+            "command_stop": "net stop mysql",
+            "command_status": "",
+            "check_keyword": "",
+            "log_file": "",
+            "config_file": "",
+            "web_directory": "",
+            "database": {
+                "engine": "mysql",
+                "host": "localhost",
+                "port": "3306",
+                "username": "root",
+                "password": "",
+                "password_env_key": "",
+                "database_name": "kawalo_db",
+                "saved_queries": []
+            },
+            "status": "Stopped"
         }
     ]
 }

@@ -8,13 +8,18 @@
             "icon": "bi-globe",
             "group": "Kawalo Core",
             "url": "http://localhost:5000",
-            "command_start": "python log_manager.py --name backend --cmd \"cd C:/laragon/www/kawalo-web-admin/backend && npm start\" --log_dir logs/backend",
+            "command_start": "python log_manager.py --name backend --cmd \"cd C:/laragon/www/kawalo-web-admin/backend && npm run dev\" --log_dir logs/backend",
             "command_stop": "taskkill /F /IM node.exe",
             "command_status": "",
             "check_keyword": "node",
             "log_file": "logs/backend/current.log",
             "config_file": "C:/laragon/www/kawalo-web-admin/backend/.env",
             "web_directory": "C:/laragon/www/kawalo-web-admin/backend",
+            "database": {
+                "engine": "mysql",
+                "connection_url": "mysql://root@localhost:3306/kawalo_db",
+                "saved_queries": []
+            },
             "status": "Stopped"
         },
         {
@@ -37,8 +42,9 @@
             "id": "mysql_db",
             "name": "MySQL Database (kawalo_db)",
             "type": "laragon",
-            "category": "backend",
+            "icon": "bi-window",
             "group": "Infrastructure",
+            "url": "",
             "command_start": "net start MySQL",
             "command_stop": "net stop MySQL",
             "command_status": "",
@@ -46,12 +52,17 @@
             "log_file": "C:/laragon/bin/mysql/mysql-8.0.30-winx64/data/LENOVO.err",
             "config_file": "C:/laragon/bin/mysql/mysql-8.0.30-winx64/my.ini",
             "web_directory": "",
-            "db_connection": {
-                "host": "localhost",
-                "user": "root",
-                "password": "",
-                "database": "kawalo_db"
-            }
+            "database": {
+                "engine": "mysql",
+                "connection_url": "mysql://root@localhost:3306/kawalo_db",
+                "saved_queries": [
+                    {
+                        "label": "show users",
+                        "query": "SELECT  `UserId`,  `UserUID`,  `UserEmail`,  `UserName`,  `Password`, LEFT(`FCMID`, 256), LEFT(`InstallId`, 256),  `UserProfilePic`,  `UserAddress`,  `UserTitle`,  `UserRT`,  `UserRW`,  `UserDesc`,  `UserState`,  `UserStateDT`,  `UserLoc`,  `UserLocDT`,  `UserDuty`,  `UserDutyDT`,  `NotiGuestEmail`,  `NotiGuestEmailAddr`,  `Blok`,  `BlokNumber`,  `HomeNumber`,  `HomeLetter`,  `MyLat`,  `MyLong`,  `MyLatLongDT`,  `FaceRegistered` FROM `kawalo_db`.`tkuser` LIMIT 1000;"
+                    }
+                ]
+            },
+            "status": "Stopped"
         }
     ]
 }

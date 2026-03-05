@@ -5,6 +5,7 @@ import subprocess
 import psutil
 from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 from dotenv import load_dotenv
+from db_connector import execute_db_query, is_read_only_query, test_db_connection
 
 
 
@@ -135,10 +136,11 @@ def dashboard():
     registry = load_registry()
     stats = get_system_stats()
     
-    # Cek status service realtime
+    # Cek status service realtime & database availability
     services = registry.get('services', [])
     for svc in services:
         svc['status'] = evaluate_service_status(svc)
+        svc['has_database'] = 'database' in svc
         
     return render_template('dashboard.html', 
                            data=registry, 
@@ -578,6 +580,21 @@ def save_service():
         'web_directory': request.form.get('web_directory', '')
     }
 
+    # Build database config if enabled (Connection String URI schema)
+    db_engine = request.form.get('db_engine', '')
+    if db_engine:
+        saved_queries_json = request.form.get('db_saved_queries', '[]')
+        try:
+            saved_queries = json.loads(saved_queries_json)
+        except json.JSONDecodeError:
+            saved_queries = []
+        
+        new_service['database'] = {
+            'engine': db_engine,
+            'connection_url': request.form.get('db_connection_url', ''),
+            'saved_queries': saved_queries
+        }
+
     # Determine file path
     file_path = 'configs/registry_prod.json' if env_target == 'production' else 'configs/registry_dev.json'
     
@@ -631,6 +648,146 @@ def delete_service(env, service_id):
         flash(f'Error deleting service: {str(e)}', 'error')
     
     return redirect(url_for('manage_services'))
+
+# --- DATABASE API ---
+
+@app.route('/api/database/execute', methods=['POST'])
+def database_execute():
+    """Execute a database query for a specific service."""
+    if 'logged_in' not in session:
+        return jsonify({"error": "Unauthorized"}), 401
+    
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "Invalid request body"}), 400
+    
+    service_id = data.get('service_id', '')
+    query_string = data.get('query', '').strip()
+    
+    if not service_id:
+        return jsonify({"error": "service_id is required"}), 400
+    if not query_string:
+        return jsonify({"error": "query is required"}), 400
+    
+    # Cari service dari registry
+    registry = load_registry()
+    service = next((s for s in registry.get('services', []) if s['id'] == service_id), None)
+    
+    if not service:
+        return jsonify({"error": f"Service '{service_id}' not found"}), 404
+    
+    if 'database' not in service:
+        return jsonify({"error": f"Service '{service_id}' has no database configuration"}), 400
+    
+    # Read-only guard
+    if not is_read_only_query(query_string):
+        return jsonify({"error": "Only SELECT, SHOW, DESCRIBE, and EXPLAIN queries are allowed"}), 403
+    
+    # Execute query
+    result = execute_db_query(service, query_string)
+    
+    if "error" in result:
+        return jsonify(result), 500
+    
+    return jsonify(result)
+
+
+@app.route('/api/database/info/<service_id>')
+def database_info(service_id):
+    """Get database configuration info for a service."""
+    if 'logged_in' not in session:
+        return jsonify({"error": "Unauthorized"}), 401
+    
+    registry = load_registry()
+    service = next((s for s in registry.get('services', []) if s['id'] == service_id), None)
+    
+    if not service:
+        return jsonify({"error": "Service not found"}), 404
+    
+    db_config = service.get('database', {})
+    if not db_config:
+        return jsonify({"error": "No database configuration"}), 404
+    
+    return jsonify({
+        "engine": db_config.get("engine", ""),
+        "connection_url": db_config.get("connection_url", ""),
+        "saved_queries": db_config.get("saved_queries", [])
+    })
+
+
+@app.route('/api/database/test', methods=['POST'])
+def database_test():
+    """Test database connection for a specific service."""
+    if 'logged_in' not in session:
+        return jsonify({"success": False, "error": "Unauthorized"}), 401
+    
+    data = request.get_json()
+    if not data:
+        return jsonify({"success": False, "error": "Invalid request body"}), 400
+    
+    service_id = data.get('service_id', '')
+    if not service_id:
+        return jsonify({"success": False, "error": "service_id is required"}), 400
+    
+    registry = load_registry()
+    service = next((s for s in registry.get('services', []) if s['id'] == service_id), None)
+    
+    if not service:
+        return jsonify({"success": False, "error": "Service not found"}), 404
+    
+    if 'database' not in service:
+        return jsonify({"success": False, "error": "No database configuration"}), 400
+    
+    result = test_db_connection(service)
+    status_code = 200 if result.get('success') else 400
+    return jsonify(result), status_code
+
+
+@app.route('/api/database/test_url', methods=['POST'])
+def database_test_url():
+    """Test database connection directly using engine and url."""
+    if 'logged_in' not in session:
+        return jsonify({"success": False, "error": "Unauthorized"}), 401
+    
+    data = request.get_json()
+    if not data:
+        return jsonify({"success": False, "error": "Invalid request body"}), 400
+    
+    engine = data.get('engine', '').strip()
+    connection_url = data.get('connection_url', '').strip()
+    
+    if not engine:
+        return jsonify({"success": False, "error": "Engine is required"}), 400
+    if not connection_url:
+        return jsonify({"success": False, "error": "Connection URL is required"}), 400
+    
+    # Create a synthetic service config
+    synthetic_service = {
+        "database": {
+            "engine": engine,
+            "connection_url": connection_url
+        }
+    }
+    
+    result = test_db_connection(synthetic_service)
+    status_code = 200 if result.get('success') else 400
+    return jsonify(result), status_code
+
+
+
+@app.route('/api/services/status')
+def services_status():
+    """Get real-time status for all services (polling endpoint)."""
+    if 'logged_in' not in session:
+        return jsonify({"success": False, "error": "Unauthorized"}), 401
+    
+    registry = load_registry()
+    data = {}
+    for svc in registry.get('services', []):
+        data[svc['id']] = evaluate_service_status(svc)
+    
+    return jsonify({"success": True, "data": data})
+
 
 if __name__ == '__main__':
     port = int(os.getenv('APP_PORT', 5006))
